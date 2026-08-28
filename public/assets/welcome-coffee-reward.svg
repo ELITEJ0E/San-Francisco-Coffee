@@ -1,0 +1,53 @@
+<svg width="320" height="200" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg-welcome" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF5F2"/>
+      <stop offset="100%" stop-color="#FFE8E0"/>
+    </linearGradient>
+    <linearGradient id="cup-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D9232B"/>
+      <stop offset="100%" stop-color="#A6151B"/>
+    </linearGradient>
+    <filter id="shadow-soft" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#BA1C24" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="320" height="200" rx="24" fill="url(#bg-welcome)"/>
+  
+  <!-- Decorative Background Ripples -->
+  <circle cx="160" cy="100" r="75" fill="#FED7AA" opacity="0.25"/>
+  <circle cx="160" cy="100" r="55" fill="#BA1C24" opacity="0.08"/>
+
+  <!-- Coffee Cup 1 (Main Takeaway Cup with Lid) -->
+  <g filter="url(#shadow-soft)" transform="translate(115, 45)">
+    <!-- Cup Body -->
+    <path d="M15 40 L25 120 C25 125 35 130 50 130 C65 130 75 125 75 120 L85 40 Z" fill="url(#cup-red)"/>
+    <!-- SF White Logo Sleeve -->
+    <rect x="20" y="65" width="60" height="35" rx="4" fill="#FFFFFF"/>
+    <rect x="38" y="73" width="24" height="19" rx="3" fill="#BA1C24"/>
+    <text x="50" y="86" font-family="sans-serif" font-size="10" font-weight="900" fill="#FFFFFF" text-anchor="middle">SF</text>
+    
+    <!-- Cup Lid -->
+    <path d="M10 32 C10 26 20 24 50 24 C80 24 90 26 90 32 L88 40 L12 40 Z" fill="#3C2513"/>
+    <rect x="25" y="18" width="50" height="8" rx="3" fill="#54361C"/>
+  </g>
+
+  <!-- Smaller Cold Frappe Glass on the Left -->
+  <g filter="url(#shadow-soft)" transform="translate(60, 65)">
+    <!-- Cup Body -->
+    <path d="M10 25 L18 85 C18 90 26 94 38 94 C50 94 58 90 58 85 L66 25 Z" fill="#FFFFFF" fill-opacity="0.9"/>
+    <!-- Whipped Cream Dome -->
+    <path d="M10 25 C10 10 22 5 38 5 C54 5 66 10 66 25 Z" fill="#FFF9F5"/>
+    <path d="M22 18 C28 10 48 10 54 18" stroke="#BA1C24" stroke-width="2" stroke-linecap="round"/>
+    <!-- Straw -->
+    <line x1="48" y1="-10" x2="35" y2="35" stroke="#BA1C24" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- Floating Sparkles & Hearts -->
+  <path d="M220 50 L223 57 L230 60 L223 63 L220 70 L217 63 L210 60 L217 57 Z" fill="#F59E0B"/>
+  <path d="M80 40 L82 45 L87 47 L82 49 L80 54 L78 49 L73 47 L78 45 Z" fill="#F59E0B"/>
+  
+  <!-- Heart Icon -->
+  <path d="M235 95 C235 90 240 86 245 89 C250 86 255 90 255 95 C255 102 245 107 245 107 C245 107 235 102 235 95 Z" fill="#BA1C24"/>
+</svg>

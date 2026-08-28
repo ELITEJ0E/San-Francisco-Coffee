@@ -2,183 +2,199 @@
 
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronLeft, Sparkles, Gift } from "lucide-react";
+import { ChevronLeft, ChevronDown } from "lucide-react";
 import { useOrder } from "@/app/context/OrderContext";
+import BirthDatePickerSheet from "@/components/auth/BirthDatePickerSheet";
 import { toast } from "sonner";
 
 export default function ProfileSetupPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const phone = searchParams.get("phone") || "+60 12-896 2547";
+  const phone = searchParams.get("phone") || "+60 123456789";
   const returnUrl = searchParams.get("redirect") || "/";
   const { login } = useOrder();
 
-  const [name, setName] = useState("Sarah");
-  const [email, setEmail] = useState("sarah@sfcoffee.com");
-  const [requireEmail, setRequireEmail] = useState(true); // Toggle to support both spec variants
-  const [agreedTerms, setAgreedTerms] = useState(true);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [birthDate, setBirthDate] = useState<{ day: string; month: string; year: string } | null>(null);
+  const [receivePromos, setReceivePromos] = useState(true);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  // Mandatory check: Birth Date is required according to spec diagram
+  const isFormValid = Boolean(birthDate);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim()) {
-      toast.error("Please enter your name");
+    if (!isFormValid) {
+      toast.error("Please select your birth date");
       return;
     }
 
-    if (requireEmail && (!email || !email.includes("@"))) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
+    const finalName = name.trim() || "Jennifer";
+    const finalEmail = email.trim() || "jennifer@sfcoffee.com";
 
-    if (!agreedTerms) {
-      toast.error("Please agree to the SFC Club terms");
-      return;
-    }
+    // Complete login in OrderContext
+    login(phone, finalName, finalEmail);
 
-    // Complete authentication
-    login(phone, name.trim(), email.trim());
-    toast.success(`Welcome to SFC Club, ${name.trim()}! 15% OFF voucher added to your account.`);
+    toast.success(`Welcome, ${finalName}!`);
 
-    navigate(returnUrl);
+    // Navigate to returnUrl (or homepage) with query param to trigger Welcome Reward Modal
+    const targetPath = returnUrl.includes("?") ? `${returnUrl}&welcome=true` : `${returnUrl}?welcome=true`;
+    navigate(targetPath);
   };
 
   return (
     <div className="flex flex-col w-full h-full bg-[#FAF8F5] text-stone-900 overflow-y-auto">
       {/* Top Header */}
-      <header className="px-4 py-3.5 flex items-center justify-between border-b border-stone-200/70 bg-white sticky top-0 z-10">
+      <header className="px-4 py-3 flex items-center justify-between sticky top-0 z-10 bg-[#FAF8F5]/90 backdrop-blur-xs">
         <button
           onClick={() => navigate(-1)}
-          className="p-1.5 rounded-full hover:bg-stone-100 text-stone-700 transition-colors"
+          className="p-1.5 rounded-full hover:bg-stone-200/60 text-stone-800 transition-colors"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-6 h-6 stroke-[2.2]" />
         </button>
-        <span className="font-serif font-bold text-base text-stone-900">
-          Almost There
-        </span>
         <div className="w-8" />
       </header>
 
-      {/* Main Content */}
+      {/* Main Body */}
       <form
         onSubmit={handleSubmit}
-        className="flex-1 px-5 py-6 flex flex-col justify-between max-w-md mx-auto w-full"
+        className="flex-1 px-5 pb-6 flex flex-col justify-between max-w-md mx-auto w-full"
       >
         <div className="space-y-5">
-          {/* Welcome Banner */}
-          <div className="bg-[#FFF0EB] border border-[#FED7AA] rounded-3xl p-4 flex items-center gap-3.5 shadow-2xs">
-            <div className="w-12 h-12 rounded-2xl bg-[#BA1C24] text-white flex items-center justify-center shrink-0 shadow-xs">
-              <Gift className="w-6 h-6" />
+          {/* Centered Brand Header */}
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 bg-[#BA1C24] rounded-2xl p-2 shadow-md flex items-center justify-center mb-3">
+              <img
+                src="/assets/sf-logo.svg"
+                alt="San Francisco Coffee"
+                className="w-full h-full object-contain filter invert drop-shadow-xs"
+              />
             </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#BA1C24]">
-                New Member Gift
-              </span>
-              <h2 className="font-serif font-bold text-base text-stone-900 leading-tight">
-                15% OFF Welcome Voucher
-              </h2>
-              <p className="text-[11px] text-stone-600 mt-0.5">
-                Automatically credited to your account upon completing setup!
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#BA1C24] bg-[#FFF0EB] px-2 py-0.5 rounded-full border border-[#FED7AA]">
-              Step 3 of 3
-            </span>
-            <h1 className="font-serif text-2xl font-bold text-stone-900 mt-1">
-              Personalize Your Experience
+            <h1 className="font-serif text-2xl font-bold text-stone-900">
+              Almost There
             </h1>
             <p className="text-xs text-stone-600 mt-1">
-              Tell us how you'd like your barista to call your name on your cup.
+              Just a few more things to get you started
             </p>
           </div>
 
-          {/* Form Fields */}
-          <div className="space-y-4">
-            {/* Full Name */}
+          {/* Input Fields */}
+          <div className="space-y-4 pt-2">
+            {/* Name (Optional) */}
             <div>
-              <label className="text-xs font-bold text-stone-700 block mb-1">
-                Your Name <span className="text-red-500">*</span>
+              <label className="text-xs font-bold text-stone-800 block mb-1">
+                Name <span className="text-stone-400 font-normal">(Optional)</span>
               </label>
               <input
                 type="text"
-                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Sarah Tan"
-                className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-sm font-semibold text-stone-900 placeholder:text-stone-400 shadow-2xs focus:outline-none focus:border-[#BA1C24] focus:ring-1 focus:ring-[#BA1C24]"
+                placeholder="Your Name"
+                className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-sm font-semibold text-stone-900 placeholder:text-stone-400 shadow-2xs focus:outline-none focus:border-[#BA1C24]"
               />
             </div>
 
-            {/* Email Address */}
+            {/* Mobile Number (Prefilled, Readonly) */}
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-bold text-stone-700">
-                  Email Address {requireEmail ? <span className="text-red-500">*</span> : <span className="text-stone-400 font-normal">(Optional)</span>}
-                </label>
-                {/* Variant Toggle: Optional vs Required */}
-                <button
-                  type="button"
-                  onClick={() => setRequireEmail(!requireEmail)}
-                  className="text-[10px] text-[#BA1C24] font-medium hover:underline"
-                >
-                  {requireEmail ? "Toggle: Make Optional" : "Toggle: Make Required"}
-                </button>
-              </div>
-              <input
-                type="email"
-                required={requireEmail}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. sarah@example.com"
-                className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-sm font-semibold text-stone-900 placeholder:text-stone-400 shadow-2xs focus:outline-none focus:border-[#BA1C24] focus:ring-1 focus:ring-[#BA1C24]"
-              />
-              <p className="text-[10px] text-stone-400 mt-1">
-                We'll email your order receipts and special coffee launch invitations.
-              </p>
-            </div>
-
-            {/* Verified Phone Display */}
-            <div>
-              <label className="text-xs font-bold text-stone-700 block mb-1">
+              <label className="text-xs font-bold text-stone-800 block mb-1">
                 Mobile Number
               </label>
-              <div className="bg-stone-100 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs font-medium text-stone-600 flex items-center justify-between">
-                <span>{phone}</span>
-                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  Verified ✓
-                </span>
+              <div className="flex items-center gap-2">
+                <div className="bg-stone-100 border border-stone-200 rounded-xl px-3 py-3 text-xs font-bold text-stone-600 shadow-2xs">
+                  🇲🇾 +60
+                </div>
+                <input
+                  type="text"
+                  disabled
+                  value={phone.replace(/^\+60\s?/, "")}
+                  className="flex-1 bg-stone-100 border border-stone-200 rounded-xl px-3.5 py-3 text-sm font-semibold text-stone-600 shadow-2xs cursor-not-allowed"
+                />
               </div>
             </div>
 
-            {/* Loyalty Terms Checkbox */}
+            {/* Email (Optional) */}
+            <div>
+              <label className="text-xs font-bold text-stone-800 block mb-1">
+                Email <span className="text-stone-400 font-normal">(Optional)</span>
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Your Email"
+                className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-sm font-semibold text-stone-900 placeholder:text-stone-400 shadow-2xs focus:outline-none focus:border-[#BA1C24]"
+              />
+            </div>
+
+            {/* Birth Date * (Mandatory!) */}
+            <div>
+              <label className="text-xs font-bold text-stone-800 block mb-1">
+                Birth Date<span className="text-[#BA1C24] ml-0.5">*</span>
+              </label>
+              <div
+                onClick={() => setIsDatePickerOpen(true)}
+                className="grid grid-cols-3 gap-2 cursor-pointer"
+              >
+                {/* Month Dropdown */}
+                <div className="bg-white border border-stone-300 rounded-xl px-3 py-3 text-xs font-semibold text-stone-800 shadow-2xs flex items-center justify-between hover:border-[#BA1C24]">
+                  <span>{birthDate ? birthDate.month : "Month"}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-stone-400" />
+                </div>
+
+                {/* Day Dropdown */}
+                <div className="bg-white border border-stone-300 rounded-xl px-3 py-3 text-xs font-semibold text-stone-800 shadow-2xs flex items-center justify-between hover:border-[#BA1C24]">
+                  <span>{birthDate ? birthDate.day : "Day"}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-stone-400" />
+                </div>
+
+                {/* Year Dropdown */}
+                <div className="bg-white border border-stone-300 rounded-xl px-3 py-3 text-xs font-semibold text-stone-800 shadow-2xs flex items-center justify-between hover:border-[#BA1C24]">
+                  <span>{birthDate ? birthDate.year : "Year"}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-stone-400" />
+                </div>
+              </div>
+            </div>
+
+            {/* Promo Offers Checkbox */}
             <label className="flex items-start gap-2.5 cursor-pointer pt-1">
               <input
                 type="checkbox"
-                checked={agreedTerms}
-                onChange={(e) => setAgreedTerms(e.target.checked)}
-                className="w-4 h-4 rounded text-[#BA1C24] border-stone-300 focus:ring-[#BA1C24] mt-0.5"
+                checked={receivePromos}
+                onChange={(e) => setReceivePromos(e.target.checked)}
+                className="w-4 h-4 rounded text-[#BA1C24] border-stone-300 focus:ring-[#BA1C24] mt-0.5 accent-[#BA1C24]"
               />
               <span className="text-xs text-stone-600 leading-tight">
-                I agree to the SFC Club Loyalty Terms and consent to receive member rewards and order updates.
+                I would like to receive promotional offers and latest news from San Francisco Coffee
               </span>
             </label>
           </div>
         </div>
 
-        {/* Submit CTA */}
-        <div className="pt-6 pb-4">
+        {/* Submit CTA Button */}
+        <div className="pt-6 pb-2">
           <button
             type="submit"
-            className="w-full bg-[#BA1C24] hover:bg-[#9E141B] active:scale-98 text-white font-bold text-xs py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all"
+            disabled={!isFormValid}
+            className={`w-full font-bold text-sm py-3.5 rounded-xl transition-all shadow-md ${
+              isFormValid
+                ? "bg-[#BA1C24] hover:bg-[#9E141B] active:scale-98 text-white"
+                : "bg-[#EBBABF] text-white cursor-not-allowed opacity-80"
+            }`}
           >
-            <Sparkles className="w-4 h-4" />
-            <span>Complete & Claim 15% OFF</span>
+            Submit
           </button>
         </div>
       </form>
+
+      {/* Birth Date Picker Wheel Sheet */}
+      <BirthDatePickerSheet
+        isOpen={isDatePickerOpen}
+        onClose={() => setIsDatePickerOpen(false)}
+        initialDate={birthDate || { month: "Feb", day: "01", year: "2000" }}
+        onSelectDate={(date) => setBirthDate(date)}
+      />
     </div>
   );
 }

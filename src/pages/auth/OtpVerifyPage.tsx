@@ -2,19 +2,17 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronLeft, RefreshCw, MessageSquare, Phone, AlertCircle, Check } from "lucide-react";
+import { ChevronLeft, RefreshCw, AlertCircle, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export default function OtpVerifyPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const phone = searchParams.get("phone") || "+60 12-896 2547";
-  const channel = (searchParams.get("channel") as "sms" | "whatsapp") || "sms";
+  const phone = searchParams.get("phone") || "+6012-3456789";
   const returnUrl = searchParams.get("redirect") || "/";
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [activeChannel, setActiveChannel] = useState<"sms" | "whatsapp">(channel);
-  const [countdown, setCountdown] = useState(60);
+  const [countdown, setCountdown] = useState(28);
   const [canResend, setCanResend] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,10 +30,35 @@ export default function OtpVerifyPage() {
     }
   }, [countdown]);
 
+  const verifyCode = (code: string) => {
+    setIsVerifying(true);
+    setHasError(false);
+
+    setTimeout(() => {
+      setIsVerifying(false);
+
+      if (code === "000000") {
+        setHasError(true);
+        setErrorMessage("Invalid OTP code. Please check your messages and try again.");
+        return;
+      }
+
+      toast.success("Mobile number verified!");
+      navigate(`/auth/profile-setup?phone=${encodeURIComponent(phone)}&redirect=${encodeURIComponent(returnUrl)}`);
+    }, 400);
+  };
+
+  // Auto-trigger verification once all 6 digits are entered
+  useEffect(() => {
+    const fullCode = otp.join("");
+    if (fullCode.length === 6 && !isVerifying) {
+      verifyCode(fullCode);
+    }
+  }, [otp, isVerifying, phone, returnUrl, navigate]);
+
   const handleChange = (index: number, value: string) => {
     if (hasError) setHasError(false);
 
-    // Only allow digits
     const cleaned = value.replace(/\D/g, "");
     if (!cleaned) {
       const newOtp = [...otp];
@@ -44,7 +67,6 @@ export default function OtpVerifyPage() {
       return;
     }
 
-    // Handle paste or multi-character entry
     if (cleaned.length > 1) {
       const pasteValues = cleaned.slice(0, 6).split("");
       const newOtp = [...otp];
@@ -59,12 +81,10 @@ export default function OtpVerifyPage() {
       return;
     }
 
-    // Single character entry
     const newOtp = [...otp];
     newOtp[index] = cleaned[0];
     setOtp(newOtp);
 
-    // Auto-advance to next box
     if (index < 5 && cleaned) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -76,90 +96,56 @@ export default function OtpVerifyPage() {
     }
   };
 
-  const handleResend = (newChannel?: "sms" | "whatsapp") => {
-    if (newChannel) setActiveChannel(newChannel);
-    setCountdown(60);
+  const handleResend = () => {
+    setCountdown(30);
     setCanResend(false);
     setHasError(false);
     setOtp(["", "", "", "", "", ""]);
     inputRefs.current[0]?.focus();
-    toast.success(`New 6-digit OTP sent via ${newChannel || activeChannel}`);
+    toast.success("New 6-digit OTP code sent!");
   };
 
   const handleFillTestOtp = () => {
     setOtp(["1", "2", "3", "4", "5", "6"]);
-    setHasError(false);
-  };
-
-  const handleVerify = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const fullCode = otp.join("");
-
-    if (fullCode.length < 6) {
-      setHasError(true);
-      setErrorMessage("Please enter the complete 6-digit verification code");
-      return;
-    }
-
-    setIsVerifying(true);
-
-    setTimeout(() => {
-      setIsVerifying(false);
-      // Simulate error if code is '000000'
-      if (fullCode === "000000") {
-        setHasError(true);
-        setErrorMessage("Invalid OTP code. Please check your messages and try again.");
-        return;
-      }
-
-      toast.success("Mobile number verified successfully!");
-      // Proceed to profile setup screen
-      navigate(`/auth/profile-setup?phone=${encodeURIComponent(phone)}&redirect=${encodeURIComponent(returnUrl)}`);
-    }, 600);
   };
 
   return (
     <div className="flex flex-col w-full h-full bg-[#FAF8F5] text-stone-900 overflow-y-auto">
-      {/* Header */}
-      <header className="px-4 py-3.5 flex items-center justify-between border-b border-stone-200/70 bg-white sticky top-0 z-10">
+      {/* Top Header */}
+      <header className="px-4 py-3 flex items-center justify-between sticky top-0 z-10 bg-[#FAF8F5]/90 backdrop-blur-xs">
         <button
           onClick={() => navigate(-1)}
-          className="p-1.5 rounded-full hover:bg-stone-100 text-stone-700 transition-colors"
+          className="p-1.5 rounded-full hover:bg-stone-200/60 text-stone-800 transition-colors"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-6 h-6 stroke-[2.2]" />
         </button>
-        <span className="font-serif font-bold text-base text-stone-900">
-          Verify Mobile
-        </span>
         <div className="w-8" />
       </header>
 
-      {/* Body */}
-      <div className="flex-1 px-5 py-6 flex flex-col justify-between max-w-md mx-auto w-full">
-        <div className="space-y-6">
-          {/* Header Title */}
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#BA1C24] bg-[#FFF0EB] px-2 py-0.5 rounded-full border border-[#FED7AA]">
-                Step 2 of 3
-              </span>
-              <span className="text-xs text-stone-400 font-medium">OTP Verification</span>
+      {/* Main Body */}
+      <div className="flex-1 px-5 pb-6 flex flex-col justify-between max-w-md mx-auto w-full text-center">
+        <div className="space-y-6 pt-2">
+          {/* Centered Brand Logo */}
+          <div className="flex flex-col items-center">
+            <div className="w-16 h-16 bg-[#BA1C24] rounded-2xl p-2 shadow-md flex items-center justify-center mb-3">
+              <img
+                src="/assets/sf-logo.svg"
+                alt="San Francisco Coffee"
+                className="w-full h-full object-contain filter invert drop-shadow-xs"
+              />
             </div>
             <h1 className="font-serif text-2xl font-bold text-stone-900">
-              Enter 6-Digit Code
+              Verify OTP
             </h1>
-            <p className="text-xs text-stone-600 mt-1 leading-relaxed">
-              We sent a verification code to{" "}
-              <strong className="text-stone-900">{phone}</strong> via{" "}
-              <span className="font-bold text-[#BA1C24]">
-                {activeChannel === "whatsapp" ? "WhatsApp" : "SMS"}
-              </span>.
+            <p className="text-xs text-stone-600 mt-1.5 leading-relaxed max-w-xs">
+              We've send you a 6-digit code to{" "}
+              <strong className="text-[#BA1C24] font-bold">{phone}</strong> via WhatsApp.
             </p>
           </div>
 
-          {/* 6 Digit Input Boxes */}
+          {/* 6 Square OTP Digit Boxes */}
           <div className="py-2">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-center gap-2">
               {otp.map((digit, idx) => (
                 <input
                   key={idx}
@@ -171,11 +157,11 @@ export default function OtpVerifyPage() {
                   onChange={(e) => handleChange(idx, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(idx, e)}
                   autoFocus={idx === 0}
-                  className={`w-12 h-14 text-center text-xl font-bold rounded-2xl bg-white border-2 shadow-xs focus:outline-none transition-all ${
+                  className={`w-11 h-13 text-center text-xl font-bold rounded-2xl bg-white border-2 shadow-2xs focus:outline-none transition-all ${
                     hasError
-                      ? "border-red-500 text-red-600 bg-red-50/20 ring-1 ring-red-500"
+                      ? "border-red-500 text-red-600 bg-red-50/20"
                       : digit
-                      ? "border-[#BA1C24] text-stone-900 ring-1 ring-[#BA1C24]/20"
+                      ? "border-[#BA1C24] text-stone-900 ring-2 ring-[#BA1C24]/10"
                       : "border-stone-200 text-stone-900 focus:border-[#BA1C24]"
                   }`}
                 />
@@ -184,86 +170,42 @@ export default function OtpVerifyPage() {
 
             {/* Error Message */}
             {hasError && (
-              <div className="flex items-center gap-1.5 text-xs text-red-600 mt-2.5 bg-red-50 p-2.5 rounded-xl border border-red-200">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-red-600 mt-3 bg-red-50 p-2.5 rounded-xl border border-red-200">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{errorMessage}</span>
               </div>
             )}
           </div>
 
-          {/* Resend & Channel Switcher */}
-          <div className="bg-white rounded-2xl p-4 border border-stone-200/80 shadow-2xs space-y-3">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-stone-500 font-medium">Didn't receive code?</span>
-              {canResend ? (
-                <button
-                  onClick={() => handleResend()}
-                  className="text-[#BA1C24] font-bold hover:underline flex items-center gap-1"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Resend Code</span>
-                </button>
-              ) : (
-                <span className="text-stone-400 font-medium font-mono">
-                  Resend in 0:{countdown < 10 ? `0${countdown}` : countdown}
-                </span>
-              )}
-            </div>
-
-            <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
-              <span className="text-stone-500">Switch Delivery:</span>
-              <div className="flex gap-2">
-                {activeChannel === "sms" ? (
-                  <button
-                    onClick={() => handleResend("whatsapp")}
-                    className="text-[#128C7E] font-bold flex items-center gap-1 hover:underline"
-                  >
-                    <MessageSquare className="w-3.5 h-3.5 fill-current" />
-                    <span>Send via WhatsApp</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleResend("sms")}
-                    className="text-[#BA1C24] font-bold flex items-center gap-1 hover:underline"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    <span>Send via SMS</span>
-                  </button>
-                )}
-              </div>
-            </div>
+          {/* Resend Link */}
+          <div className="flex items-center justify-center gap-1.5 text-xs">
+            <span className="text-stone-500 font-medium">Didn't receive code?</span>
+            {canResend ? (
+              <button
+                onClick={handleResend}
+                className="text-[#BA1C24] font-bold hover:underline flex items-center gap-1"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Resend Code</span>
+              </button>
+            ) : (
+              <span className="text-[#BA1C24] font-bold">
+                Resend in 00:{countdown < 10 ? `0${countdown}` : countdown}
+              </span>
+            )}
           </div>
 
-          {/* Test OTP Helper Chip */}
-          <div className="flex items-center justify-between bg-[#FFF0EB] border border-[#FED7AA] rounded-xl px-3.5 py-2 text-xs">
-            <span className="text-stone-600 font-medium">Demo Shortcut:</span>
+          {/* Demo Shortcut */}
+          <div className="pt-2">
             <button
               type="button"
               onClick={handleFillTestOtp}
-              className="text-[#BA1C24] font-bold hover:underline"
+              className="bg-[#FFF0EB] hover:bg-[#FFE5DC] text-[#BA1C24] border border-[#FED7AA] font-bold text-xs px-4 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
             >
-              Fill Test OTP (123456)
+              <Sparkles className="w-4 h-4" />
+              <span>Fill Test OTP (123456)</span>
             </button>
           </div>
-        </div>
-
-        {/* Action Button */}
-        <div className="pt-6 pb-4">
-          <button
-            type="button"
-            onClick={() => handleVerify()}
-            disabled={isVerifying}
-            className="w-full bg-[#BA1C24] hover:bg-[#9E141B] active:scale-98 disabled:opacity-50 text-white font-bold text-xs py-3.5 rounded-xl shadow-xs flex items-center justify-center gap-2 transition-all"
-          >
-            {isVerifying ? (
-              <span>Verifying code...</span>
-            ) : (
-              <>
-                <Check className="w-4 h-4 stroke-[2.5]" />
-                <span>Verify & Continue</span>
-              </>
-            )}
-          </button>
         </div>
       </div>
     </div>

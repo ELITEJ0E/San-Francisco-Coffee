@@ -1,20 +1,24 @@
 {
-  "short_name": "Subway",
-  "name": "Subway Mobile Menu",
+  "short_name": "SFC Coffee",
+  "name": "San Francisco Coffee",
+  "description": "San Francisco Coffee Mobile Rewards & Ordering App",
   "icons": [
     {
-      "src": "/vite.svg",
+      "src": "/assets/sf-logo.svg",
       "type": "image/svg+xml",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
-      "src": "/vite.svg",
+      "src": "/assets/sf-logo.svg",
       "type": "image/svg+xml",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
-  "theme_color": "#009A44",
-  "background_color": "#F7F7F7"
+  "orientation": "portrait",
+  "theme_color": "#BA1C24",
+  "background_color": "#FAF8F5"
 }
