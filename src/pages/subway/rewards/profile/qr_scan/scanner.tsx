@@ -1,24 +1,12 @@
 "use client";
 
-// import { Scanner } from "@yudiel/react-qr-scanner";
-import { useRef, useState } from "react";
-import QrReader from "react-web-qr-reader";
+import { useState } from "react";
 
 export function QrScanner() {
-  const [data, setData] = useState("Not Found");
-  const videoElem = useRef<HTMLVideoElement>(null);
+  const [data] = useState("Scan QR Code");
   return (
-    <div>
-      <p>{data}</p>
-      <QrReader
-        delay={1000}
-        onScan={(result) => {
-          alert(result);
-        }}
-        onError={(err) => {
-          alert(err);
-        }}
-      />
+    <div className="p-4 text-center">
+      <p className="text-sm text-stone-600">{data}</p>
     </div>
   );
 }
