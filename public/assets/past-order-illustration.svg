@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="100%" height="100%">
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- Paper Bag on Right (Folded top, coffee bean emblem in circle) -->
+  <g transform="translate(60, 20)" filter="url(#softShadow)">
+    <!-- Bag Body -->
+    <path d="M 12 25 L 82 25 L 75 125 L 18 125 Z" fill="#E8EAEB"/>
+    <!-- Folded Side Gusset -->
+    <path d="M 75 25 L 82 25 L 75 125 L 68 125 Z" fill="#D3D7D9"/>
+    
+    <!-- Top Folded Seal / Clip (Dark grey/black bar) -->
+    <rect x="8" y="18" width="76" height="9" rx="2" fill="#252F38"/>
+
+    <!-- Coffee Bean Emblem Circle -->
+    <circle cx="46" cy="74" r="20" fill="none" stroke="#252F38" stroke-width="1.8" stroke-dasharray="32 10 32 10"/>
+    <!-- Bean in center -->
+    <ellipse cx="46" cy="74" rx="7" ry="11" fill="#252F38" transform="rotate(-25 46 74)"/>
+    <path d="M 46 65 Q 48 74 46 83" stroke="#E8EAEB" stroke-width="1.6" stroke-linecap="round" fill="none" transform="rotate(-25 46 74)"/>
+  </g>
+
+  <!-- Takeaway Cup on Left (Overlapping bag, light grey/white cup with grey sleeve) -->
+  <g transform="translate(14, 52)" filter="url(#softShadow)">
+    <!-- Cup Body -->
+    <path d="M 6 22 L 12 92 L 48 92 L 54 22 Z" fill="#F4F6F6"/>
+    
+    <!-- Grey Sleeve -->
+    <path d="M 8 42 L 11 72 L 49 72 L 52 42 Z" fill="#B3B9BD"/>
+    <line x1="8" y1="48" x2="52" y2="48" stroke="#9EA5A9" stroke-width="1.2"/>
+    <line x1="10" y1="66" x2="50" y2="66" stroke="#9EA5A9" stroke-width="1.2"/>
+
+    <!-- Coffee Bean Badge on Sleeve -->
+    <circle cx="30" cy="57" r="10" fill="#E8EAEB"/>
+    <ellipse cx="30" cy="57" rx="4.5" ry="7" fill="#252F38" transform="rotate(-15 30 57)"/>
+    <path d="M 30 51 Q 31 57 30 63" stroke="#E8EAEB" stroke-width="1.2" stroke-linecap="round" fill="none" transform="rotate(-15 30 57)"/>
+
+    <!-- Cup Lid (Black) -->
+    <rect x="3" y="16" width="54" height="7" rx="2.5" fill="#1E272E"/>
+    <path d="M 9 16 C 9 9 51 9 51 16 Z" fill="#2C3A44"/>
+    <rect x="23" y="9" width="14" height="3" rx="1.5" fill="#3D4E5B"/>
+  </g>
+</svg>

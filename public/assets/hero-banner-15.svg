@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 680" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient: Warm ambient cafe lighting & dark wood -->
+    <radialGradient id="cafeAmbience" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#4A2E1B"/>
+      <stop offset="50%" stop-color="#24160E"/>
+      <stop offset="100%" stop-color="#0E0805"/>
+    </radialGradient>
+
+    <!-- Table Wood Gradient -->
+    <linearGradient id="woodTable" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#734B2E"/>
+      <stop offset="25%" stop-color="#55341C"/>
+      <stop offset="100%" stop-color="#2C190D"/>
+    </linearGradient>
+
+    <!-- Red Laser Beam Glow Filter -->
+    <filter id="laserGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur1"/>
+      <feGaussianBlur stdDeviation="14" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Clip bounds with rounded corners (matches rounded-3xl) -->
+  <clipPath id="bannerClip">
+    <rect width="540" height="680" rx="36"/>
+  </clipPath>
+
+  <g clip-path="url(#bannerClip)">
+    <!-- Cafe Background -->
+    <rect width="540" height="680" fill="url(#cafeAmbience)"/>
+
+    <!-- Soft background warm bokeh lights -->
+    <circle cx="90" cy="140" r="70" fill="#FF8A3D" opacity="0.12" filter="blur(25px)"/>
+    <circle cx="450" cy="180" r="90" fill="#FFC043" opacity="0.1" filter="blur(30px)"/>
+    <circle cx="270" cy="320" r="140" fill="#E63946" opacity="0.08" filter="blur(40px)"/>
+
+    <!-- Round Wood Table at bottom -->
+    <ellipse cx="270" cy="620" rx="340" ry="180" fill="url(#woodTable)"/>
+    <ellipse cx="270" cy="618" rx="336" ry="175" fill="none" stroke="#8C5C38" stroke-width="2" opacity="0.4"/>
+
+    <!-- Neon Red Laser Lines (Diagonal slash across the composition) -->
+    <g filter="url(#laserGlow)">
+      <line x1="280" y1="-20" x2="520" y2="340" stroke="#FF1A2E" stroke-width="6" stroke-linecap="round"/>
+      <line x1="520" y1="340" x2="190" y2="720" stroke="#FF1A2E" stroke-width="6" stroke-linecap="round"/>
+      
+      <!-- Intense White Core of the Laser -->
+      <line x1="280" y1="-20" x2="520" y2="340" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+      <line x1="520" y1="340" x2="190" y2="720" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+
+      <!-- Sparkle Star at the Laser Bend -->
+      <circle cx="520" cy="340" r="8" fill="#FFFFFF"/>
+      <path d="M 520 322 L 522 338 L 538 340 L 522 342 L 520 358 L 518 342 L 502 340 L 518 338 Z" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Top Headline Section -->
+    <g transform="translate(60, 80)">
+      <!-- "Brew-tiful savings with" -->
+      <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="24" fill="#FBF5F0" letter-spacing="-0.3">Brew-tiful savings with</text>
+      
+      <!-- "15% OFF" -->
+      <g transform="translate(0, 115)">
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Arial Black', sans-serif" font-weight="900" font-size="124" fill="#FFFFFF" letter-spacing="-6">15</text>
+        <text x="162" y="-48" font-family="-apple-system, BlinkMacSystemFont, 'Arial Black', sans-serif" font-weight="900" font-size="46" fill="#FFFFFF">%</text>
+        <text x="162" y=" -4" font-family="-apple-system, BlinkMacSystemFont, 'Arial Black', sans-serif" font-weight="900" font-size="44" fill="#FFFFFF" letter-spacing="1">OFF</text>
+      </g>
+
+      <!-- "at San Francisco Coffee" -->
+      <text x="0" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="23" fill="#FFFFFF">at San Francisco Coffee</text>
+    </g>
+
+    <!-- Hands & Drinks Illustration / Graphic (Rich, realistic layered art) -->
+    <!-- Left Hand & Coffee Frappe -->
+    <g transform="translate(40, 240)">
+      <!-- Left Arm Reaching In -->
+      <path d="M -60 120 Q 20 130 95 170 L 85 240 Q -10 180 -70 170 Z" fill="#DDB296"/>
+      <path d="M 88 155 Q 98 148 108 152 Q 112 162 102 172 Z" fill="#C99878"/>
+
+      <!-- Cup 1: Caramel / Coffee Frappe with Whipped Cream -->
+      <g transform="translate(75, 120)" filter="url(#cardShadow)">
+        <!-- Cup Body (Clear tapered cup with caramel beverage inside) -->
+        <path d="M 15 70 L 28 220 L 102 220 L 115 70 Z" fill="#D9A368"/>
+        
+        <!-- Ice & Swirl Texture in Drink -->
+        <path d="M 22 100 Q 55 120 70 95 Q 100 110 109 105 L 105 180 Q 75 190 32 170 Z" fill="#B87B42" opacity="0.6"/>
+        <path d="M 26 150 Q 60 140 104 160 L 102 215 L 28 215 Z" fill="#935826" opacity="0.5"/>
+
+        <!-- SF COFFEE Red Logo on Cup -->
+        <rect x="50" y="125" width="36" height="36" rx="6" fill="#C8102E"/>
+        <text x="68" y="142" font-family="sans-serif" font-weight="900" font-size="12" fill="#FFFFFF" text-anchor="middle">SF</text>
+        <text x="68" y="153" font-family="sans-serif" font-weight="800" font-size="5.5" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">COFFEE</text>
+
+        <!-- Domed Lid & Whipped Cream -->
+        <!-- Tall Fluffy Whipped Cream -->
+        <path d="M 25 70 C 15 45 40 20 60 10 C 68 5 72 2 76 0 C 80 5 85 15 95 25 C 115 35 120 55 105 70 Z" fill="#FFFFFF"/>
+        <path d="M 38 68 C 32 50 48 34 65 32 C 72 22 84 20 92 35 C 104 46 98 62 88 68 Z" fill="#FFF8F0"/>
+        <!-- Caramel Drizzle on cream -->
+        <path d="M 45 42 Q 62 48 58 64" stroke="#B87B42" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M 68 25 Q 75 38 88 45" stroke="#B87B42" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M 75 15 Q 85 30 78 50" stroke="#C88544" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+        <!-- Clear Cup Rim -->
+        <rect x="10" y="65" width="110" height="8" rx="4" fill="#FFFFFF" opacity="0.85"/>
+      </g>
+    </g>
+
+    <!-- Right Hand & Chocolate Frappe -->
+    <g transform="translate(230, 200)">
+      <!-- Right Arm Reaching In -->
+      <path d="M 330 150 Q 230 160 165 190 L 175 255 Q 260 210 340 195 Z" fill="#C99878"/>
+      <path d="M 160 180 Q 150 172 142 178 Q 140 188 152 195 Z" fill="#B38060"/>
+
+      <!-- Cup 2: Rich Chocolate Mocha Frappe with Whipped Cream -->
+      <g transform="translate(70, 70)" filter="url(#cardShadow)">
+        <!-- Cup Body (Clear tapered cup with dark chocolate beverage inside) -->
+        <path d="M 15 70 L 28 220 L 102 220 L 115 70 Z" fill="#58311B"/>
+        
+        <!-- Ice & Swirl Texture in Drink -->
+        <path d="M 22 95 Q 60 115 108 100 L 105 175 Q 60 160 30 180 Z" fill="#3D2010" opacity="0.7"/>
+        <path d="M 25 150 Q 70 175 104 150 L 102 215 L 28 215 Z" fill="#291408" opacity="0.6"/>
+
+        <!-- SF COFFEE Red Logo on Cup -->
+        <rect x="50" y="125" width="36" height="36" rx="6" fill="#C8102E"/>
+        <text x="68" y="142" font-family="sans-serif" font-weight="900" font-size="12" fill="#FFFFFF" text-anchor="middle">SF</text>
+        <text x="68" y="153" font-family="sans-serif" font-weight="800" font-size="5.5" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">COFFEE</text>
+
+        <!-- Domed Lid & Whipped Cream -->
+        <!-- Tall Fluffy Whipped Cream -->
+        <path d="M 25 70 C 15 45 40 20 60 10 C 68 5 72 2 76 0 C 80 5 85 15 95 25 C 115 35 120 55 105 70 Z" fill="#FFFFFF"/>
+        <path d="M 38 68 C 32 50 48 34 65 32 C 72 22 84 20 92 35 C 104 46 98 62 88 68 Z" fill="#FFF8F0"/>
+        <!-- Chocolate Cookie Crumb / Powder Drizzle on cream -->
+        <circle cx="58" cy="38" r="1.8" fill="#3D2010"/>
+        <circle cx="68" cy="30" r="2.2" fill="#3D2010"/>
+        <circle cx="75" cy="42" r="1.5" fill="#3D2010"/>
+        <circle cx="82" cy="32" r="2" fill="#3D2010"/>
+        <circle cx="62" cy="52" r="1.8" fill="#3D2010"/>
+        <path d="M 52 38 Q 65 42 75 60" stroke="#4A2814" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Clear Cup Rim -->
+        <rect x="10" y="65" width="110" height="8" rx="4" fill="#FFFFFF" opacity="0.85"/>
+      </g>
+    </g>
+
+    <!-- Bottom Legal & Collaboration Details (CIMB Bank) -->
+    <g transform="translate(48, 595)">
+      <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" fill="#D6C6BA">In collaboration with:</text>
+      
+      <!-- SF COFFEE Logo badge -->
+      <g transform="translate(0, 10)">
+        <rect width="28" height="28" rx="4" fill="#C8102E"/>
+        <text x="14" y="13" font-family="sans-serif" font-weight="900" font-size="9" fill="#FFFFFF" text-anchor="middle">SF</text>
+        <text x="14" y="21" font-family="sans-serif" font-weight="800" font-size="4" fill="#FFFFFF" text-anchor="middle">COFFEE</text>
+      </g>
+
+      <!-- Terms and legal disclaimer -->
+      <g transform="translate(0, 48)">
+        <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="8" fill="#A89485">Terms and Conditions apply.</text>
+        <text x="0" y="12" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="7.5" fill="#8C786A" font-weight="500">CIMB BANK BERHAD 197201001799</text>
+        <text x="0" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="7.5" fill="#8C786A" font-weight="500">CIMB ISLAMIC BANK BERHAD 200401032872</text>
+      </g>
+    </g>
+  </g>
+</svg>

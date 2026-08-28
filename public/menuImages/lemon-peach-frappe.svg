@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <!-- Warm amber golden studio background -->
+    <linearGradient id="warmStudioBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+    <linearGradient id="cupLiquid" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="35%" stop-color="#FDE68A"/>
+      <stop offset="70%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#451A03" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="400" height="400" rx="36" fill="url(#warmStudioBg)"/>
+
+  <!-- Table shadow -->
+  <ellipse cx="200" cy="340" rx="90" ry="18" fill="#451A03" opacity="0.45"/>
+
+  <!-- Lemon slice garnish on table -->
+  <g transform="translate(60, 270)">
+    <circle cx="35" cy="35" r="32" fill="#FACC15" stroke="#FEF08A" stroke-width="4"/>
+    <circle cx="35" cy="35" r="24" fill="#FEF08A"/>
+    <path d="M35 11 L35 59 M11 35 L59 35 M18 18 L52 52 M18 52 L52 18" stroke="#EAB308" stroke-width="3"/>
+  </g>
+
+  <!-- Drink Cup -->
+  <g filter="url(#softShadow)">
+    <!-- Cup Body -->
+    <path d="M140 135 L155 330 Q155 338 165 338 L235 338 Q245 338 245 330 L260 135 Z" fill="url(#cupLiquid)"/>
+    
+    <!-- Yoghurt Swirl Layers -->
+    <path d="M142 170 Q170 190 200 170 T258 185 L255 210 Q225 230 195 210 T145 220 Z" fill="#FFFFFF" opacity="0.85"/>
+    <path d="M147 240 Q175 255 200 235 T253 250 L250 275 Q220 295 195 275 T150 285 Z" fill="#FEF3C7" opacity="0.9"/>
+    
+    <!-- SF Red Logo Stamp on Cup -->
+    <rect x="175" y="210" width="50" height="50" rx="10" fill="#BA1C24"/>
+    <text x="200" y="242" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="20" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">SF</text>
+    <text x="200" y="254" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="7" fill="#FEF08A" text-anchor="middle">COFFEE</text>
+
+    <!-- Whipped Cream Swirl on Top -->
+    <path d="M136 138 C135 110, 160 85, 185 95 C195 75, 225 72, 240 92 C260 85, 272 108, 264 138 Z" fill="#FFFDF7"/>
+    <path d="M175 95 C185 80, 215 78, 225 95 Z" fill="#FFFFFF"/>
+    <path d="M190 75 C198 62, 208 62, 215 74 Z" fill="#FFFFFF"/>
+
+    <!-- Red Straw -->
+    <rect x="210" y="30" width="10" height="95" rx="5" fill="#BA1C24" transform="rotate(12 215 80)"/>
+
+    <!-- Cup Rim -->
+    <ellipse cx="200" cy="136" rx="63" ry="9" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+  </g>
+</svg>

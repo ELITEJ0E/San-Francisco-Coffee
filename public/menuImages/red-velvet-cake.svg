@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgRedV" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF1F2"/>
+      <stop offset="100%" stop-color="#FFE4E6"/>
+    </linearGradient>
+    <linearGradient id="velvetRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#9F1239"/>
+      <stop offset="100%" stop-color="#881337"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="400" rx="32" fill="url(#bgRedV)"/>
+  <ellipse cx="200" cy="240" rx="140" ry="90" fill="#FFFFFF" stroke="#F1F5F9" stroke-width="4"/>
+
+  <!-- Red Velvet Cake Slice -->
+  <g>
+    <!-- Base Layer -->
+    <path d="M110 240 L280 260 L295 215 L145 155 Z" fill="url(#velvetRed)"/>
+    <!-- Cream Cheese Frosting Layer 1 -->
+    <path d="M120 220 L285 238 L290 230 L130 180 Z" fill="#FFFFFF"/>
+    <!-- Middle Cake Layer -->
+    <path d="M130 200 L290 218 L293 205 L138 165 Z" fill="url(#velvetRed)"/>
+    <!-- Top Cream Cheese Layer -->
+    <path d="M145 155 L295 215 L265 195 L125 140 Z" fill="#FFFFFF"/>
+    <!-- Red crumbs on top -->
+    <circle cx="180" cy="165" r="3" fill="#BE123C"/>
+    <circle cx="210" cy="180" r="2.5" fill="#BE123C"/>
+    <circle cx="240" cy="190" r="3" fill="#BE123C"/>
+  </g>
+</svg>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="heroBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE4D6"/>
+      <stop offset="50%" stop-color="#FFD6C2"/>
+      <stop offset="100%" stop-color="#FECBA6"/>
+    </linearGradient>
+    <linearGradient id="cupGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFF5EE"/>
+      <stop offset="50%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FED7AA"/>
+    </linearGradient>
+    <filter id="heroShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#7C2D12" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" rx="32" fill="url(#heroBg)"/>
+  <circle cx="80" cy="80" r="50" fill="#FFEDD5" opacity="0.5"/>
+  <circle cx="320" cy="300" r="70" fill="#FFEDD5" opacity="0.4"/>
+  <ellipse cx="200" cy="355" rx="80" ry="16" fill="#7C2D12" opacity="0.2"/>
+
+  <g filter="url(#heroShadow)">
+    <!-- Cup Body -->
+    <path d="M135 130 L155 340 Q155 348 165 348 L235 348 Q245 348 245 340 L265 130 Z" fill="url(#cupGrad2)"/>
+    
+    <!-- Red & Peach Waves -->
+    <path d="M138 180 Q170 200 200 175 T262 190 L259 235 Q225 255 195 230 T142 240 Z" fill="#FB923C" opacity="0.85"/>
+    <path d="M142 240 Q175 260 200 235 T257 250 L253 295 Q220 315 195 290 T147 300 Z" fill="#FFFFFF" opacity="0.9"/>
+
+    <!-- San Francisco Logo Center Emblem -->
+    <circle cx="200" cy="240" r="32" fill="#BA1C24" stroke="#FFE4D6" stroke-width="2"/>
+    <text x="200" y="247" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="22" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">SF</text>
+    <text x="200" y="259" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="6.5" fill="#FED7AA" text-anchor="middle" letter-spacing="1">SAN FRANCISCO</text>
+    <text x="200" y="266" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="5" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">COFFEE</text>
+
+    <!-- Whipped Cream & Toppings -->
+    <path d="M130 132 C125 105, 155 80, 185 92 C195 70, 225 68, 240 88 C265 80, 275 105, 270 132 Z" fill="#FFFFFF"/>
+    
+    <!-- Peach Garnish & Syrup drizzle -->
+    <path d="M160 120 Q185 100 210 115 T255 110" stroke="#EA580C" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M175 95 Q200 80 225 92 T245 85" stroke="#EA580C" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Red Straw -->
+    <rect x="215" y="30" width="12" height="100" rx="6" fill="#BA1C24" transform="rotate(10 220 80)"/>
+    <ellipse cx="200" cy="130" rx="68" ry="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+  </g>
+</svg>

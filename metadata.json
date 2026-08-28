@@ -1,0 +1,6 @@
+{
+  "name": "San Francisco Coffee",
+  "description": "Mobile web ordering and rewards application for San Francisco Coffee (SFC) featuring store pickup selection, customizable specialty coffees, frisco frappes, treats, interactive cart, wallet payments, and live order tracking.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

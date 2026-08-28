@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgCake" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="100%" stop-color="#FED7AA"/>
+    </linearGradient>
+    <linearGradient id="cheeseBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FEF3C7"/>
+      <stop offset="100%" stop-color="#FDE68A"/>
+    </linearGradient>
+    <linearGradient id="burntTop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#451A03"/>
+      <stop offset="50%" stop-color="#78350F"/>
+      <stop offset="100%" stop-color="#92400E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="400" rx="32" fill="url(#bgCake)"/>
+  <ellipse cx="200" cy="230" rx="140" ry="100" fill="#FFFFFF" stroke="#F3F4F6" stroke-width="4"/>
+
+  <!-- Cheesecake Wedge -->
+  <g>
+    <path d="M100 240 L280 270 L300 220 L160 150 Z" fill="url(#cheeseBody)" stroke="#F59E0B" stroke-width="1.5"/>
+    <!-- Burnt Caramelized Top -->
+    <path d="M160 150 L300 220 L270 200 L140 140 Z" fill="url(#burntTop)"/>
+    <!-- Creamy interior drip -->
+    <path d="M180 230 Q200 250 220 235" fill="none" stroke="#F59E0B" stroke-width="3"/>
+  </g>
+</svg>
