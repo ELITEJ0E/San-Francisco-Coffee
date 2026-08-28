@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
-import { X } from "lucide-react";
 
-const ITEM_HEIGHT = 48;
-const VISIBLE_ITEMS = 7;
+const ITEM_HEIGHT = 54;
+const VISIBLE_ITEMS = 5;
 
 interface Option {
   value: string;
@@ -84,25 +83,15 @@ const ScrollPicker: React.FC<ScrollPickerProps> = ({
   const padding = (containerHeight - ITEM_HEIGHT) / 2;
 
   return (
-    // h-full so it fills whatever flex space the parent gives it
     <div ref={wrapperRef} className="relative w-full h-full">
-      {/* Highlight — always perfectly centered using measured height */}
-      <div
-        className="absolute left-0 right-0 bg-green-50 rounded-xl pointer-events-none z-0 border border-green-200"
-        style={{
-          height: ITEM_HEIGHT,
-          top: padding,
-        }}
-      />
-
       {/* Fade gradients */}
-      <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-white via-white/90 to-transparent z-10 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/90 to-transparent z-10 pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white via-white/80 to-transparent z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent z-10 pointer-events-none" />
 
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="h-full overflow-y-auto scrollbar-hide snap-y snap-mandatory relative z-20"
+        className="h-full overflow-y-auto scrollbar-none snap-y snap-mandatory relative z-20"
         style={{ scrollBehavior: "auto" }}
       >
         {/* Dynamic top padding so first item scrolls to center */}
@@ -112,10 +101,10 @@ const ScrollPicker: React.FC<ScrollPickerProps> = ({
           <div
             key={option.value}
             onClick={() => handleClick(index)}
-            className={`flex items-center justify-center snap-center cursor-pointer transition-all duration-200 text-lg ${
+            className={`flex items-center justify-center snap-center cursor-pointer transition-all duration-200 text-base md:text-lg ${
               value === option.value
-                ? "text-green-600 font-bold scale-110"
-                : "text-gray-400 scale-95"
+                ? "text-stone-900 font-extrabold scale-105 z-30"
+                : "text-stone-300 font-medium scale-95"
             }`}
             style={{ height: ITEM_HEIGHT }}
           >
@@ -207,7 +196,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     while (hour < 22 || (hour === 22 && minute === 0)) {
       const ampm = hour >= 12 ? "PM" : "AM";
       const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-      const timeStr = `${displayHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
+      const timeStr = `${displayHour}:${minute.toString().padStart(2, "0")} ${ampm.toLowerCase()}`;
       opts.push({ value: timeStr, label: timeStr });
       minute += 30;
       if (minute >= 60) {
@@ -237,81 +226,64 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
           {/* Half-screen sheet */}
           <div
-            className={`w-full max-w-md bg-white rounded-t-3xl shadow-2xl pointer-events-auto flex flex-col transition-transform duration-500 ${
+            className={`w-full max-w-md bg-white rounded-t-[32px] shadow-2xl pointer-events-auto flex flex-col transition-transform duration-500 pb-safe ${
               isVisible ? "translate-y-0" : "translate-y-full"
             }`}
             style={{
-              maxHeight: "56%",
-              minHeight: "420px",
+              maxHeight: "52%",
+              minHeight: "410px",
               transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)",
             }}
           >
-            {/*
-              flex-1 + min-h-0 on this div is critical:
-              - flex-1 makes it grow to fill the sheet above the sticky button
-              - min-h-0 overrides the default min-height:auto so flex children
-                can actually shrink and not overflow the sheet
-            */}
-            <div className="flex-1 flex flex-col p-6 pb-4 min-h-0 overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xl font-bold text-gray-900">
-                  Order ahead, skip the queue
-                </h3>
-                <button
-                  onClick={onClose}
-                  className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-                >
-                  <X className="w-5 h-5 text-gray-600" />
-                </button>
-              </div>
+            {/* Top Grab Handle */}
+            <div className="flex justify-center pt-4 pb-2">
+              <div className="w-16 h-1.5 bg-[#4A2E1B] rounded-full opacity-90" />
+            </div>
 
-              <p className="text-sm text-gray-500 mb-4">
-                Select pickup date and time
-              </p>
+            {/* Header Title */}
+            <div className="text-center px-6 pt-2 pb-5">
+              <h3 className="text-lg font-bold text-stone-900 tracking-tight">
+                Select Pickup Date & Time
+              </h3>
+            </div>
 
-              {/* Pickers — flex-1 + min-h-0 so they fill remaining space */}
-              <div className="flex gap-3 flex-1 min-h-0">
+            {/* Pickers Container */}
+            <div className="flex-1 flex flex-col px-6 pb-6 min-h-0 overflow-hidden relative">
+              {/* Unified absolute highlight box centered over both scroll wheels */}
+              <div
+                className="absolute left-6 right-6 bg-[#FFF0EF] rounded-2xl pointer-events-none z-10 border border-[#BA1C24]"
+                style={{
+                  height: ITEM_HEIGHT,
+                  top: "calc(50% - 27px)", // Perfectly center the ITEM_HEIGHT (54px) box vertically
+                }}
+              />
+
+              <div className="flex gap-4 flex-1 min-h-0 relative z-20">
                 {/* Date column */}
-                <div className="flex-1 flex flex-col min-h-0">
-                  <div className="text-xs font-semibold text-center text-gray-400 uppercase tracking-wider mb-2">
-                    DATE
-                  </div>
-                  {/*
-                    flex-1 + min-h-0 here lets ScrollPicker's h-full resolve
-                    to the actual available space, which ResizeObserver then
-                    measures to position the green highlight correctly
-                  */}
-                  <div className="flex-1 min-h-0">
-                    <ScrollPicker
-                      options={dateOptions}
-                      value={selectedDate}
-                      onChange={(date) => onSelect(date, selectedTime)}
-                    />
-                  </div>
+                <div className="flex-1 min-h-0">
+                  <ScrollPicker
+                    options={dateOptions}
+                    value={selectedDate}
+                    onChange={(date) => onSelect(date, selectedTime)}
+                  />
                 </div>
 
                 {/* Time column */}
-                <div className="flex-1 flex flex-col min-h-0">
-                  <div className="text-xs font-semibold text-center text-gray-400 uppercase tracking-wider mb-2">
-                    TIME
-                  </div>
-                  <div className="flex-1 min-h-0">
-                    <ScrollPicker
-                      options={timeOptions}
-                      value={selectedTime}
-                      onChange={(time) => onSelect(selectedDate, time)}
-                    />
-                  </div>
+                <div className="flex-1 min-h-0">
+                  <ScrollPicker
+                    options={timeOptions}
+                    value={selectedTime}
+                    onChange={(time) => onSelect(selectedDate, time)}
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Sticky confirm button — never moves, never gets covered */}
-            <div className="shrink-0 p-6 pt-0 border-t border-gray-100 bg-white rounded-b-3xl">
+            {/* Sticky confirm button */}
+            <div className="shrink-0 p-6 pt-0 bg-white">
               <button
                 onClick={handleConfirm}
-                className="w-full py-4 bg-[#FFC107] hover:bg-[#F9B500] active:bg-[#E6A100] text-black font-bold text-lg rounded-full transition-all active:scale-[0.985]"
+                className="w-full py-4 bg-[#BA1C24] hover:bg-[#9E141B] active:bg-[#801015] text-white font-bold text-base rounded-2xl shadow-xs transition-all active:scale-[0.985] cursor-pointer"
               >
                 Ready to order
               </button>
