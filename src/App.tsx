@@ -11,7 +11,9 @@ import OrdersPage from './pages/subway/orders/page';
 import SFStoresPage from './pages/subway/stores/page';
 import SFCProfilePage from './pages/subway/profile/page';
 import RateOrderPage from './pages/subway/orders/rate';
-import ProfilePage from './pages/subway/rewards/profile/page';
+import LoginPage from './pages/auth/LoginPage';
+import OtpVerifyPage from './pages/auth/OtpVerifyPage';
+import ProfileSetupPage from './pages/auth/ProfileSetupPage';
 import MyProfilePage from './pages/subway/rewards/profile/my_profile/page';
 import EditProfilePage from './pages/subway/rewards/profile/my_profile/edit_profile/page';
 import AddressPage from './pages/subway/rewards/profile/address/page';
@@ -63,6 +65,10 @@ function AppRoutes() {
       >
         <Routes location={location}>
           <Route path="/" element={<SFHomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/auth/login" element={<LoginPage />} />
+          <Route path="/auth/otp" element={<OtpVerifyPage />} />
+          <Route path="/auth/profile-setup" element={<ProfileSetupPage />} />
           <Route path="/menu" element={<SFMenuPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/checkout/state" element={<CheckoutStatePage />} />

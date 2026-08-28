@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronLeft, Star, Sparkles, CheckCircle2, ThumbsUp } from "lucide-react";
+import { ChevronLeft, Star, Sparkles, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useOrder } from "@/app/context/OrderContext";
 

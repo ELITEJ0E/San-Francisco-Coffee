@@ -51,6 +51,14 @@ export interface CartItem {
 }
 
 export type OrderStatus =
+  | "Pending Payment"
+  | "Order Confirmed"
+  | "Preparing Order"
+  | "Ready for Pickup"
+  | "Order Completed"
+  | "Cancelled – payment expired"
+  | "Cancelled – by customer"
+  | "Cancelled – by store"
   | "Received"
   | "Preparing"
   | "Ready"
@@ -66,6 +74,7 @@ export interface Order {
   status: OrderStatus;
   orderType: DiningMode;
   pickupTime: string;
+  tableNumber?: string | null;
   outlet: Outlet;
   items: CartItem[];
   subtotal: number;
@@ -106,6 +115,7 @@ export interface UserProfile {
   walletBalance: number; // RM 100.00
   tier: string;
   vouchersCount: number;
+  isAuthenticated?: boolean;
 }
 
 export const DEFAULT_OUTLETS: Outlet[] = [
@@ -361,6 +371,8 @@ const INITIAL_VOUCHERS: Voucher[] = [
 interface OrderContextType {
   diningMode: DiningMode;
   setDiningMode: (mode: DiningMode) => void;
+  tableNumber: string | null;
+  setTableNumber: (table: string | null) => void;
   selectedOutlet: Outlet;
   setSelectedOutlet: (outlet: Outlet) => void;
   pickupTime: string;
@@ -381,9 +393,15 @@ interface OrderContextType {
   createOrder: (orderData: Partial<Order>) => Order;
   cancelOrder: (orderId: string) => void;
   markOrderCompleted: (orderId: string) => void;
+  updateOrderStatus: (orderId: string, status: OrderStatus) => void;
   userProfile: UserProfile;
   setUserProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (auth: boolean) => void;
+  login: (phone: string, name?: string, email?: string) => void;
+  logout: () => void;
   topUpWallet: (amount: number) => void;
+  deductWalletBalance: (amount: number) => boolean;
   vouchers: Voucher[];
   redeemPointsForVoucher: (voucher: { title: string; categoryBadge: string; categorySub: string; points: number; discountType: "drink" | "food" | "discount" }) => boolean;
   claimStampReward: () => boolean;
@@ -402,7 +420,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -417,7 +435,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -447,7 +465,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -459,11 +477,32 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
     return INITIAL_VOUCHERS;
+  });
+
+  const [tableNumber, setTableNumberState] = useState<string | null>(() => {
+    return localStorage.getItem("sfc_table_number") || null;
+  });
+
+  const setTableNumber = (table: string | null) => {
+    setTableNumberState(table);
+    if (table) {
+      localStorage.setItem("sfc_table_number", table);
+    } else {
+      localStorage.removeItem("sfc_table_number");
+    }
+  };
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    const saved = localStorage.getItem("sfc_is_authenticated");
+    if (saved !== null) {
+      return saved === "true";
+    }
+    return true; // Default to authenticated for demo, can toggle to guest
   });
 
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
@@ -471,7 +510,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
+      } catch {
         // ignore
       }
     }
@@ -484,8 +523,34 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       walletBalance: 100.0,
       tier: "SFC Club",
       vouchersCount: 3,
+      isAuthenticated: true,
     };
   });
+
+  const login = (phone: string, name?: string, email?: string) => {
+    setIsAuthenticated(true);
+    localStorage.setItem("sfc_is_authenticated", "true");
+    setUserProfile((prev) => ({
+      ...prev,
+      phone,
+      name: name || prev.name || "Member",
+      email: email || prev.email,
+      isAuthenticated: true,
+    }));
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    localStorage.setItem("sfc_is_authenticated", "false");
+    setUserProfile((prev) => ({
+      ...prev,
+      isAuthenticated: false,
+    }));
+  };
+
+  useEffect(() => {
+    localStorage.setItem("sfc_is_authenticated", String(isAuthenticated));
+  }, [isAuthenticated]);
 
   // Sync to localStorage
   useEffect(() => {
@@ -584,6 +649,18 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const deductWalletBalance = (amount: number): boolean => {
+    if (userProfile.walletBalance >= amount) {
+      setUserProfile((prev) => ({
+        ...prev,
+        walletBalance: Math.max(0, Number((prev.walletBalance - amount).toFixed(2))),
+        points: prev.points + Math.floor(amount * 10),
+      }));
+      return true;
+    }
+    return false;
+  };
+
   const createOrder = (orderData: Partial<Order>): Order => {
     const randomCodeNum = Math.floor(10 + Math.random() * 90);
     const letter = ["SF", "CL", "KL", "PR"][Math.floor(Math.random() * 4)];
@@ -627,9 +704,10 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       date: dateStr,
       time: timeStr,
       createdAt: Date.now(),
-      status: "Received",
+      status: orderData.status || "Order Confirmed",
       orderType: diningMode,
       pickupTime: pickupTime || "Today, ASAP (15 mins)",
+      tableNumber: diningMode === "eat-in" ? (tableNumber || "3") : null,
       outlet: selectedOutlet,
       items: [...cartItems],
       subtotal: calculatedSubtotal,
@@ -654,7 +732,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     setUserProfile((prev) => {
       const isWallet = newOrder.paymentMethod.includes("Wallet");
       const newBal = isWallet ? Math.max(0, prev.walletBalance - finalTotal) : prev.walletBalance;
-      const newStamps = (prev.stamps + stampsEarned) % 9;
+      const newStamps = (prev.stamps + stampsEarned) % 10;
       return {
         ...prev,
         walletBalance: Number(newBal.toFixed(2)),
@@ -668,13 +746,19 @@ export function OrderProvider({ children }: { children: ReactNode }) {
 
   const cancelOrder = (orderId: string) => {
     setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: "Cancelled" } : o))
+      prev.map((o) => (o.id === orderId ? { ...o, status: "Cancelled – by customer" } : o))
     );
   };
 
   const markOrderCompleted = (orderId: string) => {
     setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, status: "Completed" } : o))
+      prev.map((o) => (o.id === orderId ? { ...o, status: "Order Completed" } : o))
+    );
+  };
+
+  const updateOrderStatus = (orderId: string, status: OrderStatus) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, status } : o))
     );
   };
 
@@ -741,14 +825,25 @@ export function OrderProvider({ children }: { children: ReactNode }) {
 
   // Find most recent active order
   const activeOrder =
-    orders.find((o) => o.status === "Received" || o.status === "Preparing" || o.status === "Ready") ||
-    null;
+    orders.find(
+      (o) =>
+        o.status === "Pending Payment" ||
+        o.status === "Order Confirmed" ||
+        o.status === "Preparing Order" ||
+        o.status === "Ready for Pickup" ||
+        o.status === "Received" ||
+        o.status === "Preparing" ||
+        o.status === "Ready" ||
+        o.status === "To pay"
+    ) || null;
 
   return (
     <OrderContext.Provider
       value={{
         diningMode,
         setDiningMode,
+        tableNumber,
+        setTableNumber,
         selectedOutlet,
         setSelectedOutlet,
         pickupTime,
@@ -769,9 +864,15 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         createOrder,
         cancelOrder,
         markOrderCompleted,
+        updateOrderStatus,
         userProfile,
         setUserProfile,
+        isAuthenticated,
+        setIsAuthenticated,
+        login,
+        logout,
         topUpWallet,
+        deductWalletBalance,
         vouchers,
         redeemPointsForVoucher,
         claimStampReward,

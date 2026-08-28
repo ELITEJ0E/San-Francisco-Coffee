@@ -6,12 +6,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus, SquarePen } from "lucide-react";
 import { api } from "@/trpc/react";
-import { useAppContext } from "@/app/context/AppContext";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
 import { useTheme } from "@/app/context/ThemeContext";
-import { themeRouter } from "@/server/api/routers/theme";
 import LoadingAnimation from "@/components/loadingAnimation";
 
 interface Address {
@@ -180,7 +178,7 @@ export default function Page() {
     return (
       <div className="flex flex-col mx-auto w-full bg-white max-w-md min-h-screen">
         <NavbarHeader title={translate("Addresses")} backUrl="/profile" />
-        <LoadingAnimation />
+        <LoadingState />
       </div>
     );
   }

@@ -1,55 +1,50 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useRef, useEffect, use } from "react";
+import { useState, useRef, useEffect } from "react";
 import { NavbarHeader } from "@/components/layout/NavbarHeader";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import Cookies from "js-cookie";
 import { useAppContext } from "@/app/context/AppContext";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
-import PaymentMethod from "./payment/page";
+import { useOrder } from "@/app/context/OrderContext";
 
 export default function TopUp() {
   const amounts = [20, 50, 100, 200, 300, 500];
   const [amount, setAmount] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const account = Cookies.get("accountId");
-  const { phoneNumber, setIsEwalletPayment, isEwalletPayment } =
-    useAppContext();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const paymentMethod = searchParams.get("paymentmethod");
-  const savedAmount = searchParams.get("amount"); // Get saved amount from URL
+  const { phoneNumber, setIsEwalletPayment, isEwalletPayment } = useAppContext();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const savedAmount = searchParams.get("amount");
   const { translate } = useTranslation();
-  console.log(account, "accID");
+  const { topUpWallet } = useOrder();
+
   const { data: accData } = api.loyalty.getLoyaltyAcc.useQuery({
     accID: account ?? "",
     brandId: process.env.NEXT_PUBLIC_BRAND_ID ?? ""
   });
 
   const { mutate: topUp } = api.loyalty.topUpWallet.useMutation({
-    onSuccess: async (data) => {
-      console.log(data, "topUpData");
+    onSuccess: async (data: { points?: { url?: string } }) => {
       const paymentURL = data?.points?.url;
-
       if (savedAmount) {
         setIsEwalletPayment(true);
       } else {
         setIsEwalletPayment(false);
       }
+      sessionStorage.setItem("isEwalletPayment", JSON.stringify(isEwalletPayment));
 
-      sessionStorage.setItem(
-        "isEwalletPayment",
-        JSON.stringify(isEwalletPayment),
-      );
+      if (amount && parseFloat(amount) > 0) {
+        topUpWallet(parseFloat(amount));
+      }
 
       if (paymentURL) {
-        console.log(paymentURL, "paymentUrl");
-        window.location.href = paymentURL;
+        navigate(paymentURL);
       } else {
         toast.error(translate("PaymentFailed"));
       }
@@ -61,7 +56,7 @@ export default function TopUp() {
     if (savedAmount && !amount) {
       setAmount(savedAmount);
     }
-  }, [savedAmount]);
+  }, [savedAmount, amount]);
 
   // Handle quick amount selection
   const handleAmountSelect = (value: number) => {
@@ -77,7 +72,6 @@ export default function TopUp() {
       setAmount("");
     }
   };
-  console.log(PaymentMethod, "paymentMethod");
   const handleTopUp = () => {
     // Perform top up logic here
     console.log("Top up amount:", amount);

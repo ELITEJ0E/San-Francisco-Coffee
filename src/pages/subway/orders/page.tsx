@@ -4,20 +4,12 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
-  Clock,
   MapPin,
   QrCode,
-  CheckCircle2,
   ChevronRight,
-  Phone,
   RotateCcw,
-  Star,
   Receipt,
-  Share2,
-  Navigation,
-  Sparkles,
   Coffee,
-  ShoppingBag,
 } from "lucide-react";
 import { useOrder, type Order, type OrderStatus } from "@/app/context/OrderContext";
 
@@ -30,7 +22,6 @@ export default function SFCOrdersPage() {
     orders,
     activeOrder,
     markOrderCompleted,
-    cancelOrder,
     addToCart,
     setSelectedOutlet,
   } = useOrder();

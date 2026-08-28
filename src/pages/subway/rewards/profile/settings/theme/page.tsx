@@ -102,7 +102,10 @@ export default function Page() {
           <Button
             key={item.name}
             variant="link"
-            onClick={() => mutate({ theme: item.name })}
+            onClick={() => {
+              handleColorSelect(item.name);
+              mutate({ theme: item.name });
+            }}
             className="w-full px-4 py-8 flex items-center justify-between text-left text-base"
           >
             <span>{item.name}</span>

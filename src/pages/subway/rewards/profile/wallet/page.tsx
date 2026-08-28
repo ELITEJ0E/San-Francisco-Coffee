@@ -4,13 +4,12 @@ import { useState } from "react";
 import { NavbarHeader } from "@/components/layout/NavbarHeader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { Eye, EyeOff as EyeClosed, CircleArrowOutUpRight } from "lucide-react";
+import { Eye, EyeOff as EyeClosed, CircleArrowOutUpRight, Scan } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/app/context/ThemeContext";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import Cookies from "js-cookie";
-import { useAppContext } from "@/app/context/AppContext";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
 import { Button } from "@/components/ui/button";
 import SubNavBar from "@/components/ui/SubNavBar";
@@ -41,7 +40,6 @@ export default function Home() {
   const theme = useTheme();
   const router = useRouter();
   const account = Cookies.get("accountId");
-  const { returnUrl } = useAppContext();
   const { translate } = useTranslation();
 
   const { data: accData } = api.loyalty.getLoyaltyAcc.useQuery({
@@ -151,14 +149,25 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <Button
-          variant={"secondary"}
-          className="text-lg bg-secondary text-primary rounded-full w-full font-semibold mb-10 mt-4"
-          onClick={() => router.push("/profile/top_up")}
-        >
-          <CircleArrowOutUpRight className="size-6 text-secondary-foreground" />
-          <span className="text-sm font-medium">{translate("TopUp")}</span>
-        </Button>
+        <div className="grid grid-cols-2 gap-3 mb-10 mt-4">
+          <Button
+            variant={"secondary"}
+            className="text-lg bg-secondary text-primary rounded-full w-full font-semibold shadow-xs hover:bg-[#BA1C24] hover:text-white transition-all border border-[#BA1C24]/20"
+            onClick={() => router.push("/profile/pay")}
+          >
+            <Scan className="size-5 text-[#BA1C24] group-hover:text-white" />
+            <span className="text-xs font-bold">{translate("Pay") || "QR Scan Pay"}</span>
+          </Button>
+
+          <Button
+            variant={"secondary"}
+            className="text-lg bg-secondary text-primary rounded-full w-full font-semibold shadow-xs hover:bg-[#BA1C24] hover:text-white transition-all border border-[#BA1C24]/20"
+            onClick={() => router.push("/profile/top_up")}
+          >
+            <CircleArrowOutUpRight className="size-5 text-secondary-foreground" />
+            <span className="text-xs font-bold">{translate("TopUp")}</span>
+          </Button>
+        </div>
 
         {/* Transactions */}
         <Card className="rounded-t-3xl p-6 bg-white min-h-screen -mt-6 pb-28">

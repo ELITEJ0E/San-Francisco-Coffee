@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import EditProfileSheet from "./ChangeProfilePic";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -134,8 +134,6 @@ export default function EditProfileForm() {
     brandId: process.env.NEXT_PUBLIC_BRAND_ID ?? "",
   });
   const profile = accData?.account;
-  const ewallet = accData?.account.acc_wallet[0];
-  const accPoint = accData?.account.acc_value[0];
   const utils = api.useUtils();
 
   const { data: requiredFields } = api.loyalty.profileCompletion.useQuery({
@@ -144,7 +142,7 @@ export default function EditProfileForm() {
 
   useEffect(() => {
     setInitialCompletionStatus(profile?.isComplete ?? false);
-  });
+  }, [profile?.isComplete]);
 
   const { mutate: updateLoyaltyAcc } = api.loyalty.editLoyaltyAcc.useMutation({
     onSuccess: (_, variables) => {
@@ -379,7 +377,7 @@ export default function EditProfileForm() {
           errorCount++;
           if (!firstError) firstError = translate("ValidPhoneNumber");
         }
-      } catch (error) {
+      } catch {
         errors.phone = true;
         hasErrors = true;
         errorCount++;

@@ -1,16 +1,11 @@
 "use client";
 
 import { useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
   Plus,
   Minus,
   Trash2,
-  MapPin,
-  Clock,
-  Tag,
-  ChevronRight,
   ShoppingBag,
   ArrowRight,
 } from "lucide-react";
@@ -27,11 +22,8 @@ export default function CartSheet({ isOpen, onClose }: CartSheetProps) {
     cartItems,
     cartTotal,
     updateCartQuantity,
-    removeFromCart,
     clearCart,
     appliedPromo,
-    selectedOutlet,
-    pickupTime,
   } = useOrder();
 
   if (!isOpen) return null;

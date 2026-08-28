@@ -39,7 +39,7 @@ export default function OrderStatusPage() {
   );
   const [showBarcodeModal, setShowBarcodeModal] = useState(false);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
-  const [countdownMinutes, setCountdownMinutes] = useState(
+  const [countdownMinutes] = useState(
     order?.estimatedReadyMinutes || 8
   );
 

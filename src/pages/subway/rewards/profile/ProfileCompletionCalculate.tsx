@@ -3,12 +3,12 @@ interface ProfileData {
   accPhone?: string;
   accName?: string;
   accTier?: string;
-  acc_Addresses?: Array<any>;
-  acc_wallet?: Array<any>;
+  acc_Addresses?: Array<unknown>;
+  acc_wallet?: Array<unknown>;
   acc_gender?: string;
   acc_email?: string;
   acc_dob?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export function profileCompleteCalculate(
@@ -24,11 +24,6 @@ export function profileCompleteCalculate(
     ShippingDetails: false,
   };
 
-  // Count completed required fields
-  let completedFieldsCount = 0;
-  const totalFields = requiredFields.length;
-  console.log(totalFields);
-
   // First, handle Shipping Details separately
   if (
     accData.acc_Addresses &&
@@ -36,7 +31,6 @@ export function profileCompleteCalculate(
     accData.acc_Addresses.length > 0
   ) {
     completed.ShippingDetails = true;
-    completedFieldsCount++; // Increment counter for shipping details
   }
 
   // Then handle other required fields

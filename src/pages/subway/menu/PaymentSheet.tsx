@@ -259,7 +259,7 @@ export default function PaymentSheet({
                   <button
                     key={tab.id}
                     onClick={() => {
-                      setSelectedCategory(tab.id as any);
+                      setSelectedCategory(tab.id as "wallet" | "card" | "fpx" | "ewallet");
                       if (tab.id === "fpx") setSelectedProvider("maybank");
                       if (tab.id === "ewallet") setSelectedProvider("tng");
                     }}

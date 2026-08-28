@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, Search, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, X, ChevronDown } from "lucide-react";
 import { NavbarHeader } from "@/components/layout/NavbarHeader";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";

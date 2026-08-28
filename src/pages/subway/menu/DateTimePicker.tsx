@@ -22,12 +22,10 @@ const ScrollPicker: React.FC<ScrollPickerProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const isScrollingRef = useRef(false);
+  const isProgrammaticRef = useRef(false);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [containerHeight, setContainerHeight] = useState(
-    ITEM_HEIGHT * VISIBLE_ITEMS,
-  );
+  const [containerHeight, setContainerHeight] = useState(0);
 
-  // Measure actual rendered height and update on resize
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
@@ -39,21 +37,21 @@ const ScrollPicker: React.FC<ScrollPickerProps> = ({
   }, []);
 
   useEffect(() => {
-    if (containerRef.current && !isScrollingRef.current) {
-      const index = options.findIndex((o) => o.value === value);
-      if (index !== -1) {
-        const targetTop = index * ITEM_HEIGHT;
-        if (Math.abs(containerRef.current.scrollTop - targetTop) > 1) {
-          containerRef.current.scrollTo({
-            top: targetTop,
-            behavior: "instant",
-          });
-        }
-      }
+    if (!containerRef.current || containerHeight === 0) return;
+    const index = options.findIndex((o) => o.value === value);
+    if (index === -1) return;
+    const targetTop = index * ITEM_HEIGHT;
+    if (Math.abs(containerRef.current.scrollTop - targetTop) > 1) {
+      isProgrammaticRef.current = true;
+      containerRef.current.scrollTo({ top: targetTop, behavior: "instant" });
+      setTimeout(() => {
+        isProgrammaticRef.current = false;
+      }, 150);
     }
-  }, [value, options]);
+  }, [value, options, containerHeight]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (isProgrammaticRef.current) return;
     isScrollingRef.current = true;
     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
 
@@ -67,41 +65,46 @@ const ScrollPicker: React.FC<ScrollPickerProps> = ({
 
     scrollTimeoutRef.current = setTimeout(() => {
       isScrollingRef.current = false;
-    }, 100);
+    }, 150);
   };
 
   const handleClick = (index: number) => {
     if (containerRef.current) {
+      isProgrammaticRef.current = true;
       containerRef.current.scrollTo({
         top: index * ITEM_HEIGHT,
         behavior: "smooth",
       });
       onChange(options[index].value);
+      setTimeout(() => {
+        isProgrammaticRef.current = false;
+      }, 400);
     }
   };
 
-  const padding = (containerHeight - ITEM_HEIGHT) / 2;
+  const padding =
+    containerHeight > 0
+      ? (containerHeight - ITEM_HEIGHT) / 2
+      : (ITEM_HEIGHT * VISIBLE_ITEMS - ITEM_HEIGHT) / 2;
 
   return (
-    <div ref={wrapperRef} className="relative w-full h-full">
-      {/* Fade gradients */}
+    <div ref={wrapperRef} className="relative w-full h-full overflow-hidden">
+      {/* Top and Bottom Fade gradients */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white via-white/80 to-transparent z-10 pointer-events-none" />
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent z-10 pointer-events-none" />
 
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="h-full overflow-y-auto scrollbar-none snap-y snap-mandatory relative z-20"
+        className="h-full overflow-y-auto overflow-x-hidden scrollbar-none snap-y snap-mandatory relative z-20"
         style={{ scrollBehavior: "auto" }}
       >
-        {/* Dynamic top padding so first item scrolls to center */}
         <div style={{ height: padding }} />
-
         {options.map((option, index) => (
           <div
             key={option.value}
             onClick={() => handleClick(index)}
-            className={`flex items-center justify-center snap-center cursor-pointer transition-all duration-200 text-base md:text-lg ${
+            className={`flex items-center justify-center snap-center cursor-pointer transition-all duration-200 text-base md:text-lg w-full ${
               value === option.value
                 ? "text-stone-900 font-extrabold scale-105 z-30"
                 : "text-stone-300 font-medium scale-95"
@@ -111,8 +114,6 @@ const ScrollPicker: React.FC<ScrollPickerProps> = ({
             {option.label}
           </div>
         ))}
-
-        {/* Dynamic bottom padding so last item scrolls to center */}
         <div style={{ height: padding }} />
       </div>
     </div>
@@ -122,20 +123,36 @@ const ScrollPicker: React.FC<ScrollPickerProps> = ({
 interface DateTimePickerProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (date: string, time: string) => void;
-  selectedDate: string;
-  selectedTime: string;
+  onSelect?: (date: string, time: string) => void;
+  onConfirm?: (formattedTime: string) => void;
+  selectedDate?: string;
+  selectedTime?: string;
+  outletName?: string;
+  outletHours?: string;
 }
 
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   isOpen,
   onClose,
   onSelect,
-  selectedDate,
-  selectedTime,
+  onConfirm,
+  selectedDate = "Today",
+  selectedTime = "ASAP",
+  outletName,
+  outletHours,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+
+  const [curDate, setCurDate] = useState(selectedDate);
+  const [curTime, setCurTime] = useState(selectedTime);
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurDate(selectedDate || "Today");
+      setCurTime(selectedTime || "ASAP");
+    }
+  }, [isOpen, selectedDate, selectedTime]);
 
   // Back button closes the sheet
   useEffect(() => {
@@ -208,7 +225,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   }, []);
 
   const handleConfirm = () => {
-    onSelect(selectedDate, selectedTime);
+    onSelect?.(curDate, curTime);
+    const resultString = curDate === "Today" && curTime === "ASAP" ? "ASAP" : `${curDate}, ${curTime}`;
+    onConfirm?.(resultString);
     onClose();
   };
 
@@ -245,6 +264,11 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
               <h3 className="text-lg font-bold text-stone-900 tracking-tight">
                 Select Pickup Date & Time
               </h3>
+              {outletName && (
+                <p className="text-xs text-stone-500 mt-1 font-medium">
+                  {outletName} {outletHours ? `• ${outletHours}` : ""}
+                </p>
+              )}
             </div>
 
             {/* Pickers Container */}
@@ -263,8 +287,8 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                 <div className="flex-1 min-h-0">
                   <ScrollPicker
                     options={dateOptions}
-                    value={selectedDate}
-                    onChange={(date) => onSelect(date, selectedTime)}
+                    value={curDate}
+                    onChange={(date) => setCurDate(date)}
                   />
                 </div>
 
@@ -272,8 +296,8 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
                 <div className="flex-1 min-h-0">
                   <ScrollPicker
                     options={timeOptions}
-                    value={selectedTime}
-                    onChange={(time) => onSelect(selectedDate, time)}
+                    value={curTime}
+                    onChange={(time) => setCurTime(time)}
                   />
                 </div>
               </div>

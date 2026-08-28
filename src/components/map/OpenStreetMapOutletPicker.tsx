@@ -250,31 +250,6 @@ export const OpenStreetMapOutletPicker: React.FC<OpenStreetMapOutletPickerProps>
 
   return (
     <div className="flex flex-col w-full h-full bg-[#FAF8F5] overflow-hidden relative">
-      {/* iOS Status Bar (matching Image 1) */}
-      <div className="bg-white px-7 pt-3 pb-1 flex items-center justify-between text-stone-900 select-none shrink-0 z-30">
-        <span className="font-bold text-sm tracking-tight">9:41</span>
-        <div className="flex items-center gap-1.5">
-          {/* Cellular bars */}
-          <div className="flex items-end gap-0.5 h-3">
-            <div className="w-0.5 h-1 bg-stone-900 rounded-2xs" />
-            <div className="w-0.5 h-1.5 bg-stone-900 rounded-2xs" />
-            <div className="w-0.5 h-2 bg-stone-900 rounded-2xs" />
-            <div className="w-0.5 h-2.5 bg-stone-900 rounded-2xs" />
-          </div>
-          {/* Wi-Fi Icon */}
-          <svg className="w-3.5 h-3.5 text-stone-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12.55a11 11 0 0 1 14.08 0" />
-            <path d="M1.42 9a16 16 0 0 1 21.16 0" />
-            <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-            <line x1="12" y1="20" x2="12.01" y2="20" strokeWidth="3" />
-          </svg>
-          {/* Battery */}
-          <div className="w-5 h-2.5 border border-stone-900 rounded-xs p-0.5 flex items-center">
-            <div className="h-full w-3.5 bg-stone-900 rounded-2xs" />
-          </div>
-        </div>
-      </div>
-
       {/* Navigation Bar Header (matching Image 1) */}
       <div className="bg-white px-4 py-3 flex items-center relative shrink-0 z-30 border-b border-stone-100">
         <button

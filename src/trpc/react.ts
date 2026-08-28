@@ -1,4 +1,33 @@
-export const api = {
+interface MutationOpts<T = unknown> {
+  onSuccess?: (data: T) => void;
+  onError?: (error: unknown) => void;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const api: any = {
+  post: {
+    submitOrder: {
+      useMutation: (opts?: MutationOpts<{ result: { url: string } }>) => ({
+        mutate: () => { if (opts?.onSuccess) opts.onSuccess({ result: { url: '/orders' } }); },
+        isPending: false
+      })
+    }
+  },
+  get: {
+    getPolicy: {
+      useQuery: ({ policyName }: { storeBrand?: string; policyName: string }) => ({
+        data: {
+          policy: {
+            policyName: policyName || "Policy",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+            content: `<h3>${policyName || "San Francisco Coffee Policy"}</h3><p>At San Francisco Coffee, we value your trust and privacy. This policy outlines our standards regarding data collection, wallet usage, refunds, reservations, and service credits.</p><p>For any inquiries, please contact support@sfcoffee.com.my or visit any of our outlets across Malaysia.</p>`
+          }
+        },
+        isLoading: false,
+        error: null
+      })
+    }
+  },
   useContext: () => ({
     loyalty: {
       getLoyaltyAddress: { invalidate: async () => {}, refetch: async () => {}, fetch: async () => ({ account: { isComplete: false, acc_Addresses: [] } }) },
@@ -21,16 +50,22 @@ export const api = {
       useQuery: () => ({ data: { required: [] } })
     },
     addLoyaltyAddress: {
-      useMutation: (opts) => ({ mutate: (data) => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
+      useMutation: (opts?: MutationOpts<string>) => ({ mutate: () => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
     },
     editLoyaltyAddress: {
-      useMutation: (opts) => ({ mutate: (data) => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
+      useMutation: (opts?: MutationOpts<string>) => ({ mutate: () => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
     },
     addDefaultAddress: {
-      useMutation: (opts) => ({ mutate: (data) => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
+      useMutation: (opts?: MutationOpts<string>) => ({ mutate: () => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
     },
     editLoyaltyAcc: {
-      useMutation: (opts) => ({ mutate: (data) => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
+      useMutation: (opts?: MutationOpts<string>) => ({ mutate: () => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
+    },
+    topUpWallet: {
+      useMutation: (opts?: MutationOpts<{ points: { url: string } }>) => ({ mutate: () => { if (opts?.onSuccess) opts.onSuccess({ points: { url: '/profile/top_up/top_up_successful' } }); } })
+    },
+    deductWallet: {
+      useMutation: (opts?: MutationOpts<string>) => ({ mutate: () => { if (opts?.onSuccess) opts.onSuccess('OK'); } })
     },
     getWalletHistory: {
       useQuery: () => ({ data: [], isLoading: false })

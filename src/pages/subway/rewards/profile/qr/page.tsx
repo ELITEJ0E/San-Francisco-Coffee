@@ -8,14 +8,11 @@ import { QRCodeSVG } from "qrcode.react";
 import { api as Api } from "@/trpc/react";
 import { useTheme } from "@/app/context/ThemeContext";
 import { InactiveAccountDialog } from "@/components/ui/InactiveAccountDialog";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import LoadingAnimation from "@/components/loadingAnimation";
 
 export default function QRPage() {
   const { translate } = useTranslation();
   const theme = useTheme();
-  const router = useRouter();
   const [accountId, setAccountId] = useState<string>("");
   const [accIdForQr, setAccIdForQr] = useState<string>("");
   const [showInactiveDialog, setShowInactiveDialog] = useState(false);
@@ -152,11 +149,16 @@ export default function QRPage() {
               <div className="border-t border-gray-200"></div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col items-center gap-2">
               {accIdForQr ? (
-                <div className="bg-white p-5 rounded-xl border-2 border-gray-100 shadow-sm">
-                  {renderCustomQRCode()}
-                </div>
+                <>
+                  <div className="bg-white p-5 rounded-xl border-2 border-gray-100 shadow-sm">
+                    {renderCustomQRCode()}
+                  </div>
+                  <p className="font-mono text-xs font-semibold text-gray-600 tracking-widest mt-1">
+                    {formatAccountId(accIdForQr)}
+                  </p>
+                </>
               ) : (
                 <div className="w-[220px] h-[220px] bg-gray-50 rounded-xl flex items-center justify-center">
                   <p className="text-gray-500 text-center px-8">

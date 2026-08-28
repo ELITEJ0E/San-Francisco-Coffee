@@ -9,7 +9,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NavbarHeader } from "@/components/layout/NavbarHeader";
 import { api } from "@/trpc/react";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
@@ -116,7 +115,7 @@ export default function ReferralProgram() {
     };
 
     fetchReferralCode();
-  }, [accData, account, getReferralCode]);
+  }, [accData, account, getReferralCode, translate]);
 
   // Share options with dynamic WhatsApp share
   const shareOptions = [

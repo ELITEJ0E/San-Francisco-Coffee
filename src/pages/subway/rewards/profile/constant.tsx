@@ -1,4 +1,4 @@
-interface ProfileMenuItemData {
+export interface ProfileMenuItemData {
   icon: string;
   label: string;
   path: string;
@@ -18,7 +18,7 @@ interface Address {
   defaul_address: boolean;
 }
 
-interface Account {
+export interface Account {
   account: {
     accID: string;
     accPhone: string;

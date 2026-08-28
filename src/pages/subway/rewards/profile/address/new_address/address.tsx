@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, Search, ChevronLeft } from "lucide-react";
+import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,6 @@ import {
   Marker,
   useLoadScript,
 } from "@react-google-maps/api";
-import { NavbarHeader } from "@/components/layout/NavbarHeader";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { useAppContext } from "@/app/context/AppContext";
@@ -20,7 +19,6 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import { parsePhoneNumber } from "react-phone-number-input";
 import { profileCompleteCalculate } from "../../ProfileCompletionCalculate";
 import Cookies from "js-cookie";
-import { set } from "date-fns";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
 import LoadingAnimation from "@/components/loadingAnimation";
 
@@ -59,7 +57,7 @@ interface FormData {
 
 export const NewAddress = () => {
   const router = useRouter();
-  const [currentLocation, setCurrentLocation] = useState<Coordinates | null>(
+  const [, setCurrentLocation] = useState<Coordinates | null>(
     null,
   );
   const [selectedLocation, setSelectedLocation] = useState<Coordinates | null>(
@@ -106,7 +104,7 @@ export const NewAddress = () => {
   const len_address = addressData?.account?.length ?? 0;
 
   const checkProfileCompletion = (
-    accountData: any,
+    accountData: Record<string, unknown>,
     requiredFields: string[],
   ) => {
     const { completionPercentage } = profileCompleteCalculate(
@@ -365,14 +363,12 @@ export const NewAddress = () => {
         phoneNumber: false,
       };
 
-      let hasErrors = false;
       let errorCount = 0;
       let firstError = "";
 
       // Validate address title
       if (!formData.addressTitle.trim()) {
         errors.addressTitle = true;
-        hasErrors = true;
         errorCount++;
         if (!firstError) firstError = translate("AddressTitleRequired");
       }
@@ -381,13 +377,11 @@ export const NewAddress = () => {
       if (selectedLocation) {
         if (!selectedAddress) {
           errors.address = true;
-          hasErrors = true;
           errorCount++;
           if (!firstError) firstError = translate("AddressRequired");
         }
       } else if (!formData.address.trim()) {
         errors.address = true;
-        hasErrors = true;
         errorCount++;
         if (!firstError) firstError = translate("AddressRequired");
       }
@@ -395,7 +389,6 @@ export const NewAddress = () => {
       // Validate unit number
       if (!formData.unitNumber.trim()) {
         errors.unitNumber = true;
-        hasErrors = true;
         errorCount++;
         if (!firstError) firstError = translate("UnitNumberRequired");
       }
@@ -403,7 +396,6 @@ export const NewAddress = () => {
       // Validate postcode
       if (!formData.postCode?.trim()) {
         errors.postCode = true;
-        hasErrors = true;
         errorCount++;
         if (!firstError) firstError = translate("PostalCodeRequired");
       }
@@ -411,7 +403,6 @@ export const NewAddress = () => {
       // Validate full name
       if (!formData.fullName.trim()) {
         errors.fullName = true;
-        hasErrors = true;
         errorCount++;
         if (!firstError) firstError = translate("EnterName");
       }
@@ -419,7 +410,6 @@ export const NewAddress = () => {
       // Validate phone number
       if (!phoneNumber) {
         errors.phoneNumber = true;
-        hasErrors = true;
         errorCount++;
         if (!firstError) firstError = translate("ValidPhoneNumber");
       } else {
@@ -427,7 +417,6 @@ export const NewAddress = () => {
         const phoneNo = parsePhoneNumber(formattedPhoneNumber);
         if (!isValidPhoneNumber(formattedPhoneNumber, phoneNo?.country)) {
           errors.phoneNumber = true;
-          hasErrors = true;
           errorCount++;
           if (!firstError) firstError = translate("ValidPhoneNumber");
         }

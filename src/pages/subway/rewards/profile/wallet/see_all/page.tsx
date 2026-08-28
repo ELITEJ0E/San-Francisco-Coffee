@@ -1,13 +1,12 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import Cookies from "js-cookie";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getYear } from "date-fns";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
+import { useNavigate } from "react-router-dom";
 
 interface WalletTransaction {
   transId: string;
@@ -30,14 +29,9 @@ interface FormattedTransaction {
   isPositive: boolean;
 }
 
-export default function WalletTransaction() {
-  const router = useRouter();
+export default function WalletTransactionPage() {
+  const navigate = useNavigate();
   const account = Cookies.get("accountId");
-
-  const { data: accData } = api.loyalty.getLoyaltyAcc.useQuery({
-    accID: account ?? "",
-    brandId: process.env.NEXT_PUBLIC_BRAND_ID ?? ""
-  });
 
   const { data: walletHistory } = api.loyalty.getWalletHistory.useQuery({
     accID: account || "",
@@ -47,7 +41,7 @@ export default function WalletTransaction() {
   const groupedTransactions: Record<string, FormattedTransaction[]> =
     Array.isArray(walletHistory)
       ? walletHistory.reduce(
-          (acc: Record<string, FormattedTransaction[]>, transaction) => {
+          (acc: Record<string, FormattedTransaction[]>, transaction: WalletTransaction) => {
             const date = new Date(transaction.transDate);
             const manualAdjust = new Date(date.getTime() - 8 * 60 * 60 * 1000);
             console.log(manualAdjust, "manualAdjust");
@@ -94,7 +88,7 @@ export default function WalletTransaction() {
       <div className="flex items-center justify-center relative py-5 w-full bg-secondary text-2xl shadow-xl z-10 sticky top-0">
         <button
           className="absolute left-4"
-          onClick={() => window.history.back()}
+          onClick={() => navigate(-1)}
         >
           <ChevronLeft className="h-6 w-6 text-primary" />
         </button>

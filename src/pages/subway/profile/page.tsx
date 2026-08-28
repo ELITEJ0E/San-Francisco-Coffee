@@ -5,22 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { useOrder } from "@/app/context/OrderContext";
 import { cn } from "@/lib/utils";
 import {
-  User,
   Wallet,
   QrCode,
-  Coffee,
   Ticket,
   Receipt,
   MapPin,
-  Settings,
-  HelpCircle,
   ChevronRight,
   Plus,
   ShieldCheck,
-  Heart,
-  Sparkles,
   Phone,
-  LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 

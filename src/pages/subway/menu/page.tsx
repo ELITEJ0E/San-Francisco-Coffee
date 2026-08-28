@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useRef, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import MenuDetails, { type MenuItem } from "./MenuDetails";
 import CartSheet from "./CartSheet";
@@ -12,14 +12,8 @@ import {
   Search,
   X,
   Clock,
-  ShoppingBag,
-  Sparkles,
   ChevronRight,
   Plus,
-  MapPin,
-  ChevronDown,
-  Gift,
-  Tag,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -314,16 +308,13 @@ export const ALL_MENU_ITEMS: Record<string, MenuItem[]> = {
 
 export default function SFMenuPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const {
     diningMode,
     setDiningMode,
     selectedOutlet,
     pickupTime,
     setPickupTime,
-    cartItems,
     cartCount,
-    cartTotal,
     addToCart,
     applyPromoCode,
   } = useOrder();
@@ -386,26 +377,7 @@ export default function SFMenuPage() {
   return (
     <div className="flex-1 flex flex-col bg-stone-50 overflow-hidden relative">
       {/* Top Crimson Header with Two White Cards (matching Image 3) */}
-      <div className="bg-[#BA1C24] text-white px-3.5 pt-1 pb-3 space-y-2 shadow-md shrink-0 z-10">
-        {/* iOS Status Bar in white */}
-        <div className="px-1 pt-1 pb-1 flex items-center justify-between text-white text-xs font-semibold select-none">
-          <span>9:41</span>
-          <div className="flex items-center gap-1.5">
-            <div className="flex items-end gap-0.5 h-2.5">
-              <div className="w-0.5 h-1 bg-white rounded-2xs" />
-              <div className="w-0.5 h-1.5 bg-white rounded-2xs" />
-              <div className="w-0.5 h-2 bg-white rounded-2xs" />
-              <div className="w-0.5 h-2.5 bg-white rounded-2xs" />
-            </div>
-            <svg className="w-3.5 h-3.5 text-white fill-current" viewBox="0 0 24 24">
-              <path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.5c3.5 0 6.7 1.3 9.1 3.5L12 19.3 2.9 11C5.3 8.8 8.5 7.5 12 7.5z"/>
-            </svg>
-            <div className="w-5 h-2.5 border border-white rounded-[3px] p-0.5 flex items-center">
-              <div className="h-full w-full bg-white rounded-[1px]" />
-            </div>
-          </div>
-        </div>
-
+      <div className="bg-[#BA1C24] text-white px-3.5 pt-3 pb-3 space-y-2 shadow-md shrink-0 z-10">
         {/* Card 1: Store selector + Segmented Dine In / Pickup toggle */}
         <div className="bg-white text-stone-900 rounded-[22px] px-3.5 py-2.5 flex items-center justify-between shadow-xs">
           <button

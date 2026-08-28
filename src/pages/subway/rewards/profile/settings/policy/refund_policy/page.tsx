@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
 import { NavbarHeader } from "@/components/layout/NavbarHeader";

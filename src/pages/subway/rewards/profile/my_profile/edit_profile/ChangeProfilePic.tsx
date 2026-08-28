@@ -2,7 +2,6 @@ import React, { useState, useRef, type ChangeEvent } from "react";
 import { Camera, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { api } from "@/trpc/react";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
 import { toast } from "sonner";
 
@@ -35,8 +34,6 @@ const CameraComponent = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { translate } = useTranslation();
-
-  const { mutate: uploadImage } = api.loyalty.uploadProfileImg.useMutation();
 
   const handleCapture = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,6 @@ import { useAppContext } from "@/app/context/AppContext";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { parsePhoneNumber } from "react-phone-number-input";
 import { cn } from "@/lib/utils";
-import { set } from "date-fns";
 import Cookies from "js-cookie";
 import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
 import LoadingAnimation from "@/components/loadingAnimation";
@@ -75,7 +74,7 @@ const NewAddress = () => {
         }
       : null;
 
-  const [currentLocation, setCurrentLocation] = useState<Coordinates | null>(
+  const [, setCurrentLocation] = useState<Coordinates | null>(
     initialCoordinates,
   );
   const [selectedLocation, setSelectedLocation] = useState<Coordinates | null>(
@@ -120,7 +119,6 @@ const NewAddress = () => {
       // router.push("/profile/address");
     },
     onError: (error) => {
-      const errorMessage = error?.message || "Error updating address";
       toast.error(translate("AddressUpdateFailed"));
       console.error("Address update error:", error);
       setIsSaving(false);
@@ -165,14 +163,12 @@ const NewAddress = () => {
       phoneNumber: false,
     };
 
-    let hasErrors = false;
     let errorCount = 0;
     let firstError = "";
 
     // Validation for address title
     if (!formData.addressTitle.trim()) {
       errors.addressTitle = true;
-      hasErrors = true;
       errorCount++;
       if (!firstError) firstError = translate("AddressTitleRequired");
     }
@@ -181,14 +177,12 @@ const NewAddress = () => {
     if (selectedLocation?.lat || selectedLocation?.lng) {
       if (!selectedAddress) {
         errors.selectedAddress = true;
-        hasErrors = true;
         errorCount++;
         if (!firstError)
           firstError = "Please search for location to locate your address";
       }
     } else if (!formData.address.trim()) {
       errors.address = true;
-      hasErrors = true;
       errorCount++;
       if (!firstError) firstError = translate("AddressRequired");
     }
@@ -196,7 +190,6 @@ const NewAddress = () => {
     // Validation for unit number
     if (!formData.unitNumber.trim()) {
       errors.unitNumber = true;
-      hasErrors = true;
       errorCount++;
       if (!firstError) firstError = translate("UnitNumberRequired");
     }
@@ -204,7 +197,6 @@ const NewAddress = () => {
     // Validation for postcode
     if (!formData.postCode.trim()) {
       errors.postCode = true;
-      hasErrors = true;
       errorCount++;
       if (!firstError) firstError = translate("PostalCodeRequired");
     }
@@ -212,7 +204,6 @@ const NewAddress = () => {
     // Validation for full name
     if (!formData.fullName.trim()) {
       errors.fullName = true;
-      hasErrors = true;
       errorCount++;
       if (!firstError) firstError = translate("EnterName");
     }
@@ -220,7 +211,6 @@ const NewAddress = () => {
     // Validation for phone number
     if (!phoneNumber) {
       errors.phoneNumber = true;
-      hasErrors = true;
       errorCount++;
       if (!firstError) firstError = translate("ValidPhoneNumber");
     } else {
@@ -228,7 +218,6 @@ const NewAddress = () => {
       const phoneNo = parsePhoneNumber(phoneNumber);
       if (!isValidPhoneNumber(formattedPhoneNumber, phoneNo?.country)) {
         errors.phoneNumber = true;
-        hasErrors = true;
         errorCount++;
         if (!firstError) firstError = translate("ValidPhoneNumber");
       }
@@ -302,7 +291,7 @@ const NewAddress = () => {
     }
   };
 
-  const getCurrentLocation = () => {
+  const getCurrentLocation = useCallback(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -332,7 +321,7 @@ const NewAddress = () => {
         },
       );
     }
-  };
+  }, [address, initialCoordinates]);
 
   useEffect(() => {
     if (isLoaded && !loadError) {
@@ -342,7 +331,7 @@ const NewAddress = () => {
       const cleanedPhoneNumber = phoneNumber.replace(/\D/g, "");
       setPhoneNumber(cleanedPhoneNumber);
     }
-  }, [isLoaded, loadError, phoneNumber]);
+  }, [isLoaded, loadError, phoneNumber, getCurrentLocation]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;

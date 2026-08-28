@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Check, Download } from "lucide-react";
+import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { NavbarHeader } from "@/components/layout/NavbarHeader";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ export default function Page() {
     // Check if already installed (running in standalone mode)
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as any).standalone === true;
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
     setIsStandalone(standalone);
   }, []);
 

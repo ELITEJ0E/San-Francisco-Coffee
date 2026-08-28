@@ -104,19 +104,17 @@ export default function MenuDetails({
     }
   }, [isOpen, item]);
 
-  if (!isOpen || !item) return null;
-
-  const isBeverage = item.hasVariations !== false && (
-    item.category === "Special Promo" ||
-    item.category === "Espresso & Coffee" ||
-    item.category === "Chocolate & Tea" ||
-    item.category === "Frisco Frappe" ||
-    item.category === "SF Signatures"
-  );
+  const isBeverage = Boolean(item?.hasVariations !== false && (
+    item?.category === "Special Promo" ||
+    item?.category === "Espresso & Coffee" ||
+    item?.category === "Chocolate & Tea" ||
+    item?.category === "Frisco Frappe" ||
+    item?.category === "SF Signatures"
+  ));
 
   // Calculate unit price based on selections
   const unitPrice = useMemo(() => {
-    let price = item.price;
+    let price = item?.price || 0;
     if (isBeverage) {
       if (size === "Large") price += 1.5;
       if (temperature === "Iced") price += 1.5;
@@ -127,7 +125,9 @@ export default function MenuDetails({
       price += syrupVanilla * 2.0;
     }
     return price;
-  }, [item.price, isBeverage, size, temperature, milk, extraEspressoShots, syrupCaramel, syrupHazelnut, syrupVanilla]);
+  }, [item?.price, isBeverage, size, temperature, milk, extraEspressoShots, syrupCaramel, syrupHazelnut, syrupVanilla]);
+
+  if (!isOpen || !item) return null;
 
   const totalPrice = unitPrice * quantity;
   const totalPriceIncTax = totalPrice * 1.06;
@@ -149,7 +149,7 @@ export default function MenuDetails({
       size: isBeverage ? size : undefined,
       temperature: isBeverage ? temperature : undefined,
       milk: isBeverage ? milk : undefined,
-      sweetness: isBeverage ? (sweetness as any) : undefined,
+      sweetness: isBeverage ? sweetness : undefined,
       extraEspressoShots: extraEspressoShots || undefined,
       syrupCaramel: syrupCaramel || undefined,
       syrupHazelnut: syrupHazelnut || undefined,

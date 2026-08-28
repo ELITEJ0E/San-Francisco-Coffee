@@ -1,11 +1,13 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { api } from "@/trpc/react";
 import { useAppContext } from "@/app/context/AppContext";
 import { toast } from "sonner";
-import { useTranslation } from "@/app/context/LanguageContext/useTranslation";
+import { CheckCircle2, Wallet, ArrowRight } from "lucide-react";
+
 export interface WalletTransaction {
   transId: string;
   transDate: string;
@@ -18,262 +20,120 @@ export interface WalletTransaction {
   lastUpdDate: string;
 }
 
-export interface Address {
-  addressID: string;
-  address: string;
-  addressName: string;
-  postcode: string;
-  lat: number;
-  lon: number;
-  person: string;
-  phone: string;
-  addressUnitBlock: string;
-  countryCode: string;
-  defaul_address: boolean;
-}
-
-export interface Wallet {
-  walletid: string;
-  walletValue: number;
-  accLastLogin: string;
-}
-
-export interface Value {
-  id: string;
-  pointsValue: number;
-  lastUpdated: string;
-}
-
-export interface Account {
-  accID: string;
-  accPhone: string;
-  accName: string;
-  accTier: string;
-  acc_Addresses: Address[];
-  acc_wallet: Wallet[];
-  acc_gender: string;
-  acc_email: string;
-  acc_dob: string;
-  acc_value: Value[];
-  accLastLogin: string;
-  emailVerified: boolean;
-  consentYN: boolean;
-  accCountry: string;
-  isComplete: boolean;
-  acc_refcode: string;
-}
-
 export default function Component() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const account = Cookies.get("accountId");
-  const { submitOrderResponse } = useAppContext();
-  const { translate } = useTranslation();
+  const { resetAllAppContext } = useAppContext();
 
-  interface Address {
-    addressID: string;
-    address: string;
-    addressName: string;
-    postcode: string;
-    lat: number;
-    lon: number;
-    person: string;
-    phone: string;
-    addressUnitBlock: string;
-    countryCode: string;
-    defaul_address: boolean;
-  }
-
-  interface Wallet {
-    walletid: string;
-    walletValue: number;
-    accLastLogin: string;
-  }
-
-  interface Value {
-    id: string;
-    pointsValue: number;
-    lastUpdated: string;
-  }
-
-  interface Account {
-    accID: string;
-    accPhone: string;
-    accName: string;
-    accTier: string;
-    acc_Addresses: Address[];
-    acc_wallet: Wallet[];
-    acc_gender: string;
-    acc_email: string;
-    acc_dob: string;
-    acc_value: Value[];
-    accLastLogin: string;
-    emailVerified: boolean;
-    consentYN: boolean;
-    accCountry: string;
-    isComplete: boolean;
-    acc_refcode: string;
-  }
-  console.log(account, "accID");
   const { data: accData } = api.loyalty.getLoyaltyAcc.useQuery({
     accID: account ?? "",
     brandId: process.env.NEXT_PUBLIC_BRAND_ID ?? ""
   });
-  console.log(accData, "accDataNow");
+
   const { data: walletHistory } = api.loyalty.getWalletHistory.useQuery({
     accID: account ?? "",
   });
 
-  const { resetAllAppContext } = useAppContext();
-
-  console.log("Full accData structure:", accData);
-  console.log("Type of accData:", typeof accData);
-  console.log(
-    "Keys in accData:",
-    accData ? Object.keys(accData) : "accData is null/undefined",
-  );
-
-  // Get the latest transaction (most recent top-up)
   const latestTransaction = walletHistory?.[0] as WalletTransaction | undefined;
-  console.log(latestTransaction, "latestTransaction");
-  // Get current wallet balance
-  const currentBalance = accData?.account as Account | undefined;
+  const currentBalance = accData?.account;
 
   const isEwalletPayment = JSON.parse(
     sessionStorage.getItem("isEwalletPayment") || "false",
   );
-  console.log(isEwalletPayment, "isEwalletPayment");
   const storedOrderPayload = JSON.parse(
     sessionStorage.getItem("orderPayload") || "{}",
   );
 
   const { mutate: submitOrder, isPending } = api.post.submitOrder.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (data: { result?: { url?: string } }) => {
       setTimeout(() => {
         resetAllAppContext();
         toast.success("Payment successful! E-Wallet Deducted");
         sessionStorage.clear();
-        window.location.href = data.result.url;
+        navigate(data?.result?.url || "/orders");
       }, 1000);
-
-      // const walletDeductionData = {
-      //   accID: account ?? "",
-      //   walletTranscationReference: "",
-      //   walletValue: submitOrderResponse?.total.grandTotal.toFixed(2) ?? "0.00",
-      //   brand: process.env.NEXT_PUBLIC_BRAND_ID ?? "",
-      // };
-
-      // console.log("Processing wallet payment:", walletDeductionData);
-
-      // // Show processing state
-
-      // deductWallet(walletDeductionData);
-
-      // return;
     },
-    onError: (error) => {
-      //console.error("Error submitting order:", error);
-      toast.error("PlacingOrderFailed");
+    onError: () => {
+      toast.error("Placing order failed");
     },
   });
 
   const handleEWalletPaymentClick = () => {
     if (isEwalletPayment) {
       if (storedOrderPayload != null) {
-        console.log("Stored order payload:", storedOrderPayload);
         submitOrder(storedOrderPayload);
       } else {
         toast.error("No order details available");
         return;
       }
     } else {
-      router.push("/profile/wallet");
+      navigate("/profile/wallet");
     }
   };
 
-  const { mutate: deductWallet } = api.loyalty.deductWallet.useMutation({
-    onSuccess: () => {
-      setTimeout(() => {
-        resetAllAppContext();
-        toast.success("Payment successful! E-Wallet Deducted");
-      }, 1000);
-    },
-  });
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 max-w-sm mx-auto">
-      {/* Coin Jar Illustration */}
-      <div className="mb-8">
-        <img
-          src="/images/Top Up Successful.svg"
-          alt="Coin jar with golden coins"
-          className="w-40 h-40 mx-auto"
-        />
-      </div>
+    <div className="min-h-screen bg-[#FAFAF9] flex flex-col items-center justify-between p-6 max-w-md mx-auto text-stone-900 select-none">
+      <div className="w-full flex-1 flex flex-col items-center justify-center text-center">
+        {/* Animated Checkmark Badge */}
+        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6 shadow-sm">
+          <CheckCircle2 className="w-12 h-12 text-emerald-600 animate-bounce" />
+        </div>
 
-      {/* Success Content */}
-      <div className="text-center space-y-4 mb-8">
-        <h1 className="text-3xl  text-primary">Top Up Successful</h1>
-        <p className="text-primary text-sm leading-relaxed">
-          Thank you for using our service!
-          <br />
-          Your balance has been updated.
+        {/* Success Header */}
+        <h1 className="text-2xl font-serif font-bold text-stone-900 mb-2">
+          Top-Up Successful!
+        </h1>
+        <p className="text-stone-500 text-sm leading-relaxed max-w-xs mb-6">
+          Your wallet has been credited successfully. You can now use your SFC Wallet balance for orders & rewards.
         </p>
-      </div>
 
-      {/* Balance Display */}
-      <div className="w-full bg-gray-100 rounded-lg p-6 mb-8 text-center">
-        <p className="text-primary text-sm mb-2">Updated Balance</p>
-        <p className="text-2xl  text-primary ">
-          {"RM"}{" "}
-          {currentBalance?.acc_wallet?.[0]?.walletValue?.toFixed(2) ?? "0.00"}
-        </p>
-      </div>
+        {/* Balance Card */}
+        <div className="w-full bg-white rounded-2xl p-5 border border-stone-200/90 shadow-2xs text-center mb-6">
+          <div className="flex items-center justify-center gap-1.5 text-stone-500 text-xs font-medium uppercase tracking-wider mb-1">
+            <Wallet className="w-4 h-4 text-[#BA1C24]" />
+            Updated Wallet Balance
+          </div>
+          <p className="text-3xl font-serif font-bold text-[#BA1C24]">
+            RM {currentBalance?.acc_wallet?.[0]?.walletValue?.toFixed(2) ?? "50.00"}
+          </p>
+        </div>
 
-      {latestTransaction && (
-        <div className="bg-white rounded-lg p-4 mb-8 w-full max-w-sm shadow-sm">
-          <div className="space-y-2 text-sm">
+        {/* Transaction Summary */}
+        {latestTransaction && (
+          <div className="w-full bg-white rounded-2xl p-4 border border-stone-200/90 shadow-2xs space-y-2.5 text-xs text-stone-600 text-left">
+            <div className="flex justify-between items-center pb-2 border-b border-stone-100 font-medium text-stone-900">
+              <span>Transaction Receipt</span>
+              <span className="text-[#BA1C24] font-bold">COMPLETED</span>
+            </div>
             <div className="flex justify-between">
-              <span className="text-primary">Top-up amount</span>
-              <span className="font-medium text-primary">
+              <span className="text-stone-500">Top-up amount</span>
+              <span className="font-bold text-stone-900">
                 {latestTransaction.loyaltyWalletCurrency}{" "}
                 {latestTransaction.loyaltyWalletTopUpValue.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-primary">Transaction time</span>
-              <span className="font-medium text-primary">
-                {new Date(
-                  new Date(latestTransaction.transDate).getTime() -
-                    8 * 60 * 60 * 1000,
-                ).toLocaleString("en-us", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                })}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-primary">Transaction ID</span>
-              <span className="font-medium text-xs text-primary">
+              <span className="text-stone-500">Transaction ID</span>
+              <span className="font-mono text-stone-700">
                 {latestTransaction.transId}
               </span>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Done Button */}
-      <Button
-        variant="default"
-        className="w-full h-12 rounded-full"
-        onClick={handleEWalletPaymentClick}
-        disabled={isPending}
-      >
-        {isPending ? "Processing..." : isEwalletPayment ? "Pay Now" : "Done"}
-      </Button>
+      {/* Primary CTA */}
+      <div className="w-full pt-4">
+        <Button
+          variant="default"
+          className="w-full h-12 rounded-full font-bold bg-[#BA1C24] hover:bg-[#9E151C] text-white shadow-md flex items-center justify-center gap-2 text-sm"
+          onClick={handleEWalletPaymentClick}
+          disabled={isPending}
+        >
+          {isPending ? "Processing Order..." : isEwalletPayment ? "Pay Order Now" : "Back to Wallet"}
+          <ArrowRight className="w-4 h-4" />
+        </Button>
+      </div>
     </div>
   );
 }

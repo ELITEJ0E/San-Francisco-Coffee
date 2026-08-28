@@ -6,15 +6,10 @@ import { useOrder } from "@/app/context/OrderContext";
 import {
   MapPin,
   ChevronRight,
-  Clock,
   Sparkles,
   ArrowRight,
-  Flame,
-  BadgePercent,
-  CheckCircle2,
   Coffee,
   ShoppingBag,
-  Gift,
   Plus,
 } from "lucide-react";
 import SelectOutletSheet from "./SelectOutletSheet";
@@ -45,7 +40,6 @@ export function SubwayHomeSections({
 }: SubwayHomeSectionsProps) {
   const navigate = useNavigate();
   const {
-    diningMode,
     setDiningMode,
     selectedOutlet,
     activeOrder,
@@ -59,7 +53,7 @@ export function SubwayHomeSections({
     navigate(`/menu?orderType=${mode}`);
   };
 
-  const handleQuickAdd = (e: React.MouseEvent, item: any) => {
+  const handleQuickAdd = (e: React.MouseEvent, item: { id: string; name: string; price: number; image?: string; description?: string }) => {
     e.stopPropagation();
     addToCart({
       id: `${item.id}-${Date.now()}`,

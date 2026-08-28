@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Sparkles, Check, Coffee, Plus, Gift, Flame, Droplets } from "lucide-react";
+import { X, Check, Plus, Gift, Flame, Droplets } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type CartItem } from "@/app/context/OrderContext";
 

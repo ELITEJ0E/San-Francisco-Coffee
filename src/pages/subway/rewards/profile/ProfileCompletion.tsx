@@ -18,7 +18,7 @@ import { useTranslation } from "../context/LanguageContext/useTranslation";
 import { api } from "@/trpc/react";
 
 interface ProfileCompletionProps {
-  accData?: any;
+  accData?: Record<string, unknown>;
   fieldsCompletion?: string[];
 }
 

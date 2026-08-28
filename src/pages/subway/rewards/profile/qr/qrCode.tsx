@@ -4,7 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 function CustomQRCode({ value, logo, onRendered }: { value: string; logo?: string; onRendered?: () => void }) {
   useEffect(() => {
     onRendered?.(); // notify parent when mounted
-  }, []);
+  }, [onRendered]);
 
   return (
     <div className="relative">
